@@ -5,6 +5,12 @@
       "path": "articles/test",
       "file": "index.html",
       "created_at": "2025-06-20T17:17:55+09:00"
+    },
+    {
+      "type": "user-article",
+      "path": "articles/example",
+      "file": "index.html",
+      "created_at": "2025-06-20T17:25:11+09:00"
     }
   ]
 }
