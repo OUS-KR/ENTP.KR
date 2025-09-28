@@ -1,13 +1,13 @@
 {
   "list": [
     {
-      "type": "user-page",
+      "type": "user-article",
       "path": "",
       "files": [
         "index.html",
         "content.json"
       ],
-      "created_at": "2025-09-28T17:26:11+09:00"
+      "created_at": "2025-09-28T17:33:01+09:00"
     }
   ]
 }
