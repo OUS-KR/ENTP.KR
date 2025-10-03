@@ -2,5 +2,17 @@
   {
     "text": "첫화면",
     "link": "/@lux"
+  },
+  {
+    "text": "노래",
+    "link": "/@lux/songs"
+  },
+  {
+    "text": "배경화면 이미지",
+    "link": "/@lux/wallpapers"
+  },
+  {
+    "text": "소셜 미디어",
+    "link": "/@lux/sns/"
   }
 ]
