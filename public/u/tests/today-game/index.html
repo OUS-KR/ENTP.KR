@@ -189,23 +189,24 @@
         gameInProgress = true;
     }
 
-    // Game 1: What If?
-    function setupWhatIfGame() {
-        document.getElementById('gameTitle').innerText = "오늘의 게임: What If?";
+    // Game 1: Hypothesis Testing Quiz
+    function setupHypothesisTestingQuiz() {
+        document.getElementById('gameTitle').innerText = "오늘의 게임: 가설 검증 퀴즈";
         const gameArea = document.getElementById('gameArea');
         const scenarios = [
-            "만약 중력이 현재의 절반이라면?",
-            "만약 모든 사람이 다른 사람의 생각을 읽을 수 있다면?",
-            "만약 시간이 거꾸로 흐른다면?"
+            { q: "어떤 마을에서 갑자기 새들이 사라졌습니다. 가장 먼저 검증할 가설은?", a: ["기후 변화 때문이다.", "새로운 포식자가 나타났다.", "먹이원이 고갈되었다."], correct: 2 },
+            { q: "새로 출시된 앱의 사용자 이탈률이 높습니다. 가장 먼저 검증할 가설은?", a: ["경쟁 앱이 더 좋기 때문이다.", "사용자 인터페이스가 복잡하기 때문이다.", "초기 로딩 속도가 느리기 때문이다."], correct: 2 },
+            { q: "어떤 학생의 성적이 갑자기 떨어졌습니다. 가장 먼저 검증할 가설은?", a: ["공부에 흥미를 잃었기 때문이다.", "개인적인 어려움이 생겼기 때문이다.", "수면 부족 때문이다."], correct: 1 }
         ];
         const scenario = scenarios[Math.floor(currentRandFn() * scenarios.length)];
-        gameArea.innerHTML = `<div class="game-display question">${scenario}<br>긍정적, 부정적 결과를 각각 한 가지씩 작성해 보세요.</div>`;
-        document.getElementById('game-input-area').innerHTML = `
-            <div class="game-input">
-                <textarea id="userConsequences" placeholder="예: 긍정: ... / 부정: ..."></textarea>
-                <button id="submitConsequences">제출</button>
+        currentCorrectAnswer = scenario.correct;
+        gameArea.innerHTML = `
+            <div class="game-display question">${scenario.q}</div>
+            <div class="choices">
+                ${scenario.a.map((choice, index) => `<button class="choice-btn" data-index="${index}">${choice}</button>`).join('')}
             </div>
         `;
+        document.getElementById('game-input-area').innerHTML = '';
         gameInProgress = true;
     }
 
@@ -253,7 +254,7 @@
     // --- Game Dispatcher and Common Logic ---
     const gameTypes = [
         setupDevilsAdvocateGame,
-        setupWhatIfGame,
+        setupHypothesisTestingQuiz,
         setupFallacySpotterGame,
         setupSystemHackGame
     ];
@@ -316,14 +317,12 @@
         document.getElementById('feedbackMessage').className = "feedback-message";
         
         const currentGameFn = gameTypes[gameTypeIndex];
-        if (currentGameFn === setupFallacySpotterGame) {
+        if (currentGameFn === setupFallacySpotterGame || currentGameFn === setupHypothesisTestingQuiz) {
             document.querySelectorAll('.choice-btn').forEach(btn => {
                 btn.addEventListener('click', handleChoiceClick);
             });
         } else if (currentGameFn === setupDevilsAdvocateGame) {
             document.getElementById('submitArgument').addEventListener('click', () => handleGenericSubmit('userArgument', (val) => val.trim(), '흥미로운 주장이네요!', '한 문장이라도 입력해 주세요.'));
-        } else if (currentGameFn === setupWhatIfGame) {
-            document.getElementById('submitConsequences').addEventListener('click', () => handleGenericSubmit('userConsequences', (val) => val.includes('긍정') && val.includes('부정'), '기발한 상상력이네요!', '긍정적인 면과 부정적인 면을 모두 작성해 주세요.'));
         } else if (currentGameFn === setupSystemHackGame) {
             document.getElementById('submitAnswer').addEventListener('click', () => {
                 if (!gameInProgress) return;
