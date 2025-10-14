@@ -4,92 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오늘의 게임 - ENTP</title>
-    <link rel="stylesheet" href="/u/tests/assets/css/main.css?20251011000000">
+    <link rel="stylesheet" href="/u/tests/assets/css/main.css?20251014190000">
     <style>
         .game-card-content {
             text-align: center;
+            padding: 20px;
+            background: linear-gradient(145deg, var(--background-color-light), var(--background-color));
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
         }
         .game-area {
             margin-top: 1.5em;
-            min-height: 150px;
+            min-height: 200px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .game-display {
-            margin-bottom: 1em;
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: left;
+            padding: 1.5em;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--background-color-light);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            line-height: 1.8;
             color: var(--text-color);
         }
-        .game-display.question {
-            font-size: 1.2em;
+        .game-area p {
+            margin-bottom: 0.8em;
+            line-height: 1.6;
+        }
+        #gameStats {
+            background-color: var(--secondary-color);
+            color: var(--text-color-inverted);
+            padding: 1em 1.5em;
+            border-radius: 10px;
+            margin-bottom: 1.5em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            text-align: left;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        #gameStats p {
+            margin: 0.3em 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #gameStats p b {
+            font-size: 1.1em;
+            color: var(--accent-color);
+        }
+        #gameStats span {
             font-weight: bold;
-            font-style: italic;
         }
         .choices {
             display: flex;
             flex-direction: column;
             gap: 0.8em;
             width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
+            max-width: 450px;
+            margin: 1.5em auto 0 auto;
         }
         .choice-btn {
-            padding: 0.8em 1em;
-            font-size: 1em;
+            padding: 1em 1.2em;
+            font-size: 1.05em;
             background-color: var(--primary-color);
             color: var(--text-color-inverted);
-            border: 1px solid var(--primary-color-dark);
-            border-radius: 4px;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
         .choice-btn:hover {
             background-color: var(--primary-color-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
-        .game-input {
-            margin-top: 1.5em;
-            margin-bottom: 1em;
-            width: 100%;
-            max-width: 400px;
-        }
-        .game-input input[type="text"], .game-input textarea, .game-input input[type="number"] {
-            padding: 0.5em;
-            font-size: 1em;
-            width: 100%;
-            border: 2px solid var(--border-color, #ccc);
-            border-radius: 4px;
-            background-color: var(--input-bg-color);
-            color: var(--text-color);
-        }
-        .game-input textarea {
-            min-height: 80px;
-        }
-        .game-input button {
-            padding: 0.6em 1.5em;
-            font-size: 1.1em;
-            background-color: #007bff;
-            color: white;
-            border: 1px solid #0069d9;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 0.5em;
-        }
-        .game-input button:hover {
-            background-color: #0069d9;
+        .choice-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .feedback-message {
-            margin-top: 1em;
-            font-size: 1.2em;
+            margin-top: 1.5em;
+            font-size: 1.3em;
             font-weight: bold;
+            padding: 0.8em;
+            border-radius: 8px;
+            background-color: var(--background-color-light);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .feedback-message.correct {
             color: var(--success-color);
+            border: 1px solid var(--success-color);
         }
         .feedback-message.incorrect {
             color: var(--error-color);
+            border: 1px solid var(--error-color);
         }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4262871645049971" crossorigin="anonymous"></script>
@@ -120,6 +134,7 @@
         </div>
         
         <div class="card info-card game-card-content">
+            <div id="gameStats"></div>
             <div id="game-info">
                 <div id="gameTitle" class="card-title"></div>
                 <p id="gameDescription">게임을 불러오는 중...</p>
@@ -127,9 +142,11 @@
             <div id="gameArea" class="game-area">
                 <!-- Game content will be loaded here by JavaScript -->
             </div>
-            <div id="game-input-area">
-                <!-- Game input will be loaded here by JavaScript -->
+            <div id="gameChoices" class="choices">
+                <!-- Game choices will be loaded here by JavaScript -->
             </div>
+            <button id="nextDayBtn" class="choice-btn" style="margin-top: 20px;">다음날로 넘어가기 (오늘 5회 중 <span id="manualDayCounter">0</span>회)</button>
+            <button id="resetGameBtn" class="choice-btn" style="margin-top: 10px; background-color: var(--error-color); padding: 0.6em 1em; font-size: 0.9em; width: auto; align-self: center;">게임 초기화</button>
             <p id="feedbackMessage" class="feedback-message"></p>
         </div>
         
@@ -145,202 +162,8 @@
         </div>
     </div>
 
-    <script src="/u/tests/assets/js/main.js?20251011000000" defer></script>
-    <script src="/u/tests/assets/js/dynamic-menu.js" defer></script>
-    <script>
-    function getDailySeed() {
-        const today = new Date();
-        return today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-    }
-
-    function mulberry32(seed) {
-        return function() {
-            seed |= 0;
-            seed = seed + 0x6D2B79F5 | 0;
-            let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-            t = t + Math.imul(t ^ t >>> 7, 61 | t) | 0;
-            return ((t ^ t >>> 14) >>> 0) / 4294967296;
-        }
-    }
-
-    let currentCorrectAnswer = null;
-    let currentRandFn = null;
-    let gameInProgress = false;
-
-    // --- Game Implementations for ENTP ---
-
-    // Game 0: Devil's Advocate
-    function setupDevilsAdvocateGame() {
-        document.getElementById('gameTitle').innerText = "오늘의 게임: 악마의 변호인";
-        const gameArea = document.getElementById('gameArea');
-        const statements = [
-            "노력은 배신하지 않는다.",
-            "아는 것이 힘이다.",
-            "정직이 최선의 정책이다."
-        ];
-        const statement = statements[Math.floor(currentRandFn() * statements.length)];
-        gameArea.innerHTML = `<div class="game-display question">다음 명제에 대해 한 문장으로 반박해 보세요:<br><i>"${statement}"</i></div>`;
-        document.getElementById('game-input-area').innerHTML = `
-            <div class="game-input">
-                <input type="text" id="userArgument" placeholder="논리적인 반박을 입력하세요">
-                <button id="submitArgument">제출</button>
-            </div>
-        `;
-        gameInProgress = true;
-    }
-
-    // Game 1: Hypothesis Testing Quiz
-    function setupHypothesisTestingQuiz() {
-        document.getElementById('gameTitle').innerText = "오늘의 게임: 가설 검증 퀴즈";
-        const gameArea = document.getElementById('gameArea');
-        const scenarios = [
-            { q: "어떤 마을에서 갑자기 새들이 사라졌습니다. 가장 먼저 검증할 가설은?", a: ["기후 변화 때문이다.", "새로운 포식자가 나타났다.", "먹이원이 고갈되었다."], correct: 2 },
-            { q: "새로 출시된 앱의 사용자 이탈률이 높습니다. 가장 먼저 검증할 가설은?", a: ["경쟁 앱이 더 좋기 때문이다.", "사용자 인터페이스가 복잡하기 때문이다.", "초기 로딩 속도가 느리기 때문이다."], correct: 2 },
-            { q: "어떤 학생의 성적이 갑자기 떨어졌습니다. 가장 먼저 검증할 가설은?", a: ["공부에 흥미를 잃었기 때문이다.", "개인적인 어려움이 생겼기 때문이다.", "수면 부족 때문이다."], correct: 1 }
-        ];
-        const scenario = scenarios[Math.floor(currentRandFn() * scenarios.length)];
-        currentCorrectAnswer = scenario.correct;
-        gameArea.innerHTML = `
-            <div class="game-display question">${scenario.q}</div>
-            <div class="choices">
-                ${scenario.a.map((choice, index) => `<button class="choice-btn" data-index="${index}">${choice}</button>`).join('')}
-            </div>
-        `;
-        document.getElementById('game-input-area').innerHTML = '';
-        gameInProgress = true;
-    }
-
-    // Game 2: Logical Fallacy Spotter
-    function setupFallacySpotterGame() {
-        document.getElementById('gameTitle').innerText = "오늘의 게임: 논리 오류 찾기";
-        const gameArea = document.getElementById('gameArea');
-        const fallacies = [
-            { q: "모두가 이 스마트폰을 사니, 이게 최고의 제품임이 틀림없어.", a: ["성급한 일반화", "편승 효과", "허수아비 공격"], correct: 1 },
-            { q: "내 주장은 틀리지 않았어. 왜냐하면 내가 틀렸다는 걸 아무도 증명하지 못했으니까.", a: ["인신 공격의 오류", "피장파장의 오류", "무지에의 호소"], correct: 2 },
-            { q: "채식주의자가 소고기의 문제점을 지적하자, '너는 가죽 신발 신으면서 위선자 아니냐?'라고 답했다.", a: ["피장파장의 오류", "미끄러운 경사길의 오류", "흑백 논리의 오류"], correct: 0 }
-        ];
-        const fallacy = fallacies[Math.floor(currentRandFn() * fallacies.length)];
-        currentCorrectAnswer = fallacy.correct;
-        gameArea.innerHTML = `
-            <div class="game-display question">다음 주장에 포함된 논리적 오류는 무엇일까요?<br><i>"${fallacy.q}"</i></div>
-            <div class="choices">
-                ${fallacy.a.map((choice, index) => `<button class="choice-btn" data-index="${index}">${choice}</button>`).join('')}
-            </div>
-        `;
-        document.getElementById('game-input-area').innerHTML = '';
-        gameInProgress = true;
-    }
-
-    // Game 3: System Hack
-    function setupSystemHackGame() {
-        document.getElementById('gameTitle').innerText = "오늘의 게임: 시스템 해킹";
-        const gameArea = document.getElementById('gameArea');
-        const puzzles = [
-            { q: "'A'는 1점, 'B'는 3점. 총 5개 슬롯. 'B'는 연속으로 올 수 없음. 최대 점수는?", a: 9 }, // B A B A B
-            { q: "행동 A: 2초 소요, 5점 획득. 행동 B: 3초 소요, 8점 획득. 총 10초. 최대 점수는?", a: 26 } // A*2 + B*2 = 4+6=10초, 10+16=26점
-        ];
-        const puzzle = puzzles[Math.floor(currentRandFn() * puzzles.length)];
-        currentCorrectAnswer = puzzle.a;
-        gameArea.innerHTML = `<div class="game-display question">${puzzle.q}</div>`;
-        document.getElementById('game-input-area').innerHTML = `
-            <div class="game-input">
-                <input type="number" id="userAnswer" placeholder="최대 점수 입력">
-                <button id="submitAnswer">제출</button>
-            </div>
-        `;
-        gameInProgress = true;
-    }
-
-    // --- Game Dispatcher and Common Logic ---
-    const gameTypes = [
-        setupDevilsAdvocateGame,
-        setupHypothesisTestingQuiz,
-        setupFallacySpotterGame,
-        setupSystemHackGame
-    ];
-
-    function getDayOfWeekText(day) {
-        const messages = [
-            "일요일의 마무리, 기존의 상식을 뒤집어 보세요.", // Sunday
-            "새로운 한 주, 새로운 관점으로 시작해 보세요!", // Monday
-            "오늘은 당신의 날카로운 지성이 필요한 날입니다.", // Tuesday
-            "주 중반, 당연한 것에 질문을 던져보세요.", // Wednesday
-            "당신의 논리를 시험해 볼 시간입니다.", // Thursday
-            "주말을 앞둔 금요일, 가볍게 지적 유희를 즐겨보세요.", // Friday
-            "여유로운 토요일, 세상을 다른 방식으로 상상해 보는 건 어떠신가요?", // Saturday
-        ];
-        return messages[day];
-    }
-
-    function showFeedback(isCorrect, message) {
-        const feedbackMessage = document.getElementById('feedbackMessage');
-        if (isCorrect) {
-            feedbackMessage.innerText = message || "정답입니다! 역시 ENTP, 예리한 통찰력이 돋보이는군요.";
-            feedbackMessage.className = "feedback-message correct";
-        } else {
-            feedbackMessage.innerText = message || "아쉽네요. 다른 가능성은 없었을까요?";
-            feedbackMessage.className = "feedback-message incorrect";
-        }
-        gameInProgress = false;
-    }
-
-    function handleChoiceClick(event) {
-        if (!gameInProgress) return;
-        const selectedIndex = parseInt(event.target.getAttribute('data-index'));
-        showFeedback(selectedIndex === currentCorrectAnswer);
-        document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = true);
-    }
-
-    function handleGenericSubmit(inputId, isCorrectCondition, correctMsg, incorrectMsg) {
-        if (!gameInProgress) return;
-        const userInput = document.getElementById(inputId).value;
-        if (isCorrectCondition(userInput)) {
-            showFeedback(true, correctMsg);
-        } else {
-            showFeedback(false, incorrectMsg);
-        }
-        document.querySelector(`#${inputId} + button`).disabled = true;
-    }
-
-    function initDailyGame() {
-        const today = new Date();
-        const seed = getDailySeed();
-        currentRandFn = mulberry32(seed);
-        
-        const dayOfWeek = today.getDay();
-        document.getElementById('gameDescription').innerText = getDayOfWeekText(dayOfWeek);
-
-        const gameTypeIndex = Math.floor(currentRandFn() * gameTypes.length + dayOfWeek) % gameTypes.length;
-        gameTypes[gameTypeIndex]();
-
-        document.getElementById('feedbackMessage').innerText = '';
-        document.getElementById('feedbackMessage').className = "feedback-message";
-        
-        const currentGameFn = gameTypes[gameTypeIndex];
-        if (currentGameFn === setupFallacySpotterGame || currentGameFn === setupHypothesisTestingQuiz) {
-            document.querySelectorAll('.choice-btn').forEach(btn => {
-                btn.addEventListener('click', handleChoiceClick);
-            });
-        } else if (currentGameFn === setupDevilsAdvocateGame) {
-            document.getElementById('submitArgument').addEventListener('click', () => handleGenericSubmit('userArgument', (val) => val.trim(), '흥미로운 주장이네요!', '한 문장이라도 입력해 주세요.'));
-        } else if (currentGameFn === setupSystemHackGame) {
-            document.getElementById('submitAnswer').addEventListener('click', () => {
-                if (!gameInProgress) return;
-                const userAnswer = document.getElementById('userAnswer').value;
-                showFeedback(userAnswer == currentCorrectAnswer);
-                document.getElementById('submitAnswer').disabled = true;
-            });
-        }
-    }
-
-    window.onload = function() {
-        try {
-            initDailyGame();
-        } catch (e) {
-            console.error("오늘의 게임 생성 중 오류 발생:", e);
-            document.getElementById('gameDescription').innerText = "콘텐츠를 불러오는 데 실패했습니다. 페이지를 새로고침해 주세요.";
-        }
-    };
-    </script>
+    <script src="/u/tests/assets/js/main.js?20251014190000" defer></script>
+    <script src="/u/tests/assets/js/dynamic-menu.js?20251014190000" defer></script>
+    <script src="/u/tests/assets/js/today-game.js?20251014190000" defer></script>
 </body>
 </html>
