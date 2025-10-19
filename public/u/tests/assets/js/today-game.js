@@ -104,6 +104,16 @@ function loadGameState() {
         }
         if (loaded.knowledge === undefined) loaded.knowledge = 50;
         if (loaded.influence === undefined) loaded.influence = 50;
+        if (!loaded.inventionModules) { // Ensure the whole module object exists
+            loaded.inventionModules = {
+                ideaBank: { built: false, durability: 100, name: "아이디어 뱅크", description: "기발한 아이디어를 저장하고 조합합니다.", effect_description: "독창성 보너스 및 아이디어 자동 생성." },
+                prototypeStudio: { built: false, durability: 100, name: "프로토타입 스튜디오", description: "아이디어를 실제 형태로 제작합니다.", effect_description: "호기심 향상 및 부품 생성." },
+                debateArena: { built: false, durability: 100, name: "토론의 장", description: "아이디어를 검증하고 발전시키는 토론 공간입니다.", effect_description: "새로운 협력자 영입 및 토론 능력 강화." },
+                patentOffice: { built: false, durability: 100, name: "특허청", description: "완성된 발명품의 권리를 보호합니다.", effect_description: "과거 기록을 통해 스탯 및 자원 획득." },
+                advancedWorkshop: { built: false, durability: 100, name: "고급 작업실", description: "혁신 기술을 사용하는 고급 발명품을 제작합니다.", effect_description: "고급 발명 및 혁신 기술 활용 잠금 해제." }
+            };
+        }
+
 
         Object.assign(gameState, loaded);
 
@@ -292,7 +302,7 @@ const minigames = [
             gameArea.innerHTML = `<p>${minigames[0].description}</p><p>미니게임 시작!</p>`;
             choicesDiv.innerHTML = `<button class="choice-btn" onclick="minigames[0].processAction('endGame')">게임 종료</button>`;
         },
-        render: () => {}, // Placeholder
+        render: () => {},
         processAction: (actionType) => { if (actionType === 'endGame') minigames[0].end(); },
         end: () => {
             const rewards = calculateMinigameReward(minigames[0].name, gameState.minigameState.score);
