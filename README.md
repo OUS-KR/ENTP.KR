@@ -25,7 +25,7 @@
 ### [사용자 글 작성](https://github.com/OUS-KR/ENTP.KR/issues/new?template=03-user-article-writing-by-issue.yml)
 
 - `ENTP.KR/u/{사용자 아이디}/{글 경로}` 형태의 글 작성
-  - 마크다운 문법: [마크다운 문법](https://github.com/OUS-KR/ENTP.KR?tab=readme-ov-file#%EB%A7%88%ED%81%AC%EB%8B%A4%EC%9A%B4-%EB%AC%B8%EB%B2%95-%EC%98%88%EC%8B%9C), [마크다운 문법 예제](https://entp.kr/@entp/articles/md_example)
+  - 마크다운 문법: [마크다운 문법](https://github.com/OUS-KR/ENTP.KR?tab=readme-ov-file#%EB%A7%88%ED%81%AC%EB%8B%A4%EC%9A%B4-%EB%AC%B8%EB%B2%95), [마크다운 문법 예제 페이지](https://entp.kr/@entp/articles/md_example)
   - 사용자 글 예제: [ENTP.KR/u/entp/articles/example](https://entp.kr/u/entp/articles/example)
   - [사용자 글 작성 예제](https://github.com/OUS-KR/ENTP.KR/issues/3)
   - 동일한 글 경로 존재 시 덮어쓰기
@@ -78,7 +78,7 @@
 
 ## 마크다운 문법
 
-[마크다운 문법 예제](https://entp.kr/@entp/articles/md_example)
+[마크다운 문법 예제 페이지](https://entp.kr/@entp/articles/md_example)
 
 ### 섹션 1: 기본 마크다운 문법
 
