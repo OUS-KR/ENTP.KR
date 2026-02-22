@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENTP — entp.kr</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=Syne+Mono&display=swap" rel="stylesheet" />
+  <style type="text/tailwindcss">
+    @theme {
+      --color-navy-50:#eef2ff;
+      --color-navy-100:#d4dcf8;
+      --color-navy-200:#a8b8f0;
+      --color-navy-300:#7490e0;
+      --color-navy-400:#4a68cc;
+      --color-navy-500:#2d48b0;
+      --color-navy-600:#1c308e;
+      --color-navy-700:#112068;
+      --color-navy-800:#091448;
+      --color-navy-900:#040b2e;
+      --color-navy-950:#02061a;
+      --color-cyan-200:#b8f4ff;
+      --color-cyan-300:#7aecff;
+      --color-cyan-400:#30dcff;
+      --color-cyan-500:#00c8f0;
+      --color-cyan-600:#00a0c8;
+      --color-volt-300:#e8ff80;
+      --color-volt-400:#ccff00;
+      --color-volt-500:#aadd00;
+      --color-orange-300:#ffcc80;
+      --color-orange-400:#ffaa40;
+      --color-orange-500:#ff8800;
+      --color-orange-600:#e06000;
+      --color-char-700:#2a2a36;
+      --color-char-800:#1a1a24;
+      --color-char-900:#10101a;
+      --color-char-950:#08080f;
+      --font-display:"Syne","Arial Black",sans-serif;
+      --font-mono:"Syne Mono","Courier New",monospace;
+      --font-body:"Inter",system-ui,sans-serif;
+    }
+
+    @layer base {
+      *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+      html { background:#08080f; color:#d4dcf8; font-family:var(--font-body); scroll-behavior:smooth; overflow-x:hidden; }
+      body { min-height:100vh; position:relative; }
+      ::selection { background:rgba(0,200,240,.35); color:#fff; }
+      ::-webkit-scrollbar { width:4px; }
+      ::-webkit-scrollbar-track { background:#10101a; }
+      ::-webkit-scrollbar-thumb { background:#00c8f0; border-radius:2px; }
+    }
+
+    /* ── Canvas & Overlays ── */
+    #spark-canvas {
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+    }
+    .volt-overlay {
+      position:fixed; inset:0; z-index:1; pointer-events:none;
+      background:
+        radial-gradient(ellipse 55% 45% at 10% 20%, rgba(0,200,240,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 55% at 90% 80%, rgba(204,255,0,.04) 0%,  transparent 60%),
+        radial-gradient(ellipse 40% 40% at 55% 45%, rgba(255,136,0,.03) 0%,  transparent 55%);
+      animation:volt-pulse 8s ease-in-out infinite alternate;
+    }
+    @keyframes volt-pulse {
+      0%   { opacity:.7; }
+      100% { opacity:1; }
+    }
+    .noise-layer {
+      position:fixed; inset:0; z-index:2; pointer-events:none; opacity:.03;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:200px 200px;
+    }
+    .vignette {
+      position:fixed; inset:0; z-index:3; pointer-events:none;
+      background:radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(8,8,15,.94) 100%);
+    }
+
+    /* ── Site Wrapper ── */
+    .site-wrapper {
+      position:relative; z-index:10;
+      display:grid; grid-template-rows:auto 1fr auto; min-height:100vh;
+    }
+
+    /* ── Header ── */
+    .glass-header {
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:blur(20px) saturate(1.4);
+      background:rgba(8,8,15,.8);
+      border-bottom:1px solid rgba(0,200,240,.15);
+    }
+    .logo-entp {
+      font-family:var(--font-display);
+      font-size:1.45rem; font-weight:800; letter-spacing:.12em;
+      color:#30dcff; text-decoration:none;
+      text-shadow:0 0 20px rgba(0,200,240,.65);
+      transition:color .2s;
+    }
+    .logo-entp:hover { color:#fff; }
+    .nav-link {
+      font-family:var(--font-mono); font-size:.72rem;
+      letter-spacing:.12em; color:#4a68cc; text-decoration:none; transition:color .2s;
+    }
+    .nav-link:hover { color:#30dcff; }
+    .domain-badge {
+      font-family:var(--font-mono); font-size:.68rem;
+      letter-spacing:.1em; color:rgba(48,220,255,.72);
+      border:1px solid rgba(0,200,240,.28);
+      padding:.25rem .85rem; border-radius:2px;
+      background:rgba(0,200,240,.08);
+    }
+
+    /* ── Hero ── */
+    .hero-section {
+      position:relative; min-height:100vh;
+      display:flex; align-items:center; justify-content:center;
+      padding:8rem 1.5rem 6rem; overflow:hidden;
+    }
+    .hero-bg-text {
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-size:clamp(9rem,22vw,20rem);
+      font-weight:800; letter-spacing:.02em;
+      color:transparent;
+      -webkit-text-stroke:1px rgba(0,200,240,.08);
+      user-select:none; pointer-events:none;
+      animation:glitch-breathe 6s ease-in-out infinite;
+    }
+    @keyframes glitch-breathe {
+      0%,100% { opacity:.35; transform:scale(1)      skewX(0deg); }
+      48%      { opacity:.6;  transform:scale(1.012)  skewX(0deg); }
+      50%      { opacity:.6;  transform:scale(1.012)  skewX(-0.4deg); clip-path:inset(30% 0 40% 0); }
+      52%      { opacity:.6;  transform:scale(1.012)  skewX(0deg); clip-path:inset(0); }
+    }
+
+    /* Arc ring */
+    .arc-ring {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:min(560px,80vw); height:min(560px,80vw);
+      border:1px solid rgba(0,200,240,.1); border-radius:50%;
+      pointer-events:none;
+      animation:spin-fast 20s linear infinite;
+    }
+    .arc-ring::before {
+      content:''; position:absolute; inset:24px;
+      border:1px dashed rgba(204,255,0,.07); border-radius:50%;
+      animation:spin-rev 14s linear infinite;
+    }
+    .arc-ring::after {
+      content:''; position:absolute; inset:60px;
+      border:1px solid rgba(255,136,0,.05); border-radius:50%;
+    }
+    @keyframes spin-fast { to { transform:translate(-50%,-50%) rotate(360deg); } }
+    @keyframes spin-rev  { to { transform:rotate(-360deg); } }
+
+    .hero-content { position:relative; z-index:2; text-align:center; max-width:700px; }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:.5rem;
+      font-family:var(--font-mono); font-size:.65rem;
+      letter-spacing:.18em; text-transform:uppercase;
+      color:#00c8f0; border:1px solid rgba(0,200,240,.32);
+      padding:.35rem 1.1rem; border-radius:2px;
+      background:rgba(0,200,240,.08);
+      margin-bottom:2rem;
+    }
+    .hero-badge::before { content:'⚡'; font-size:.75em; }
+    .hero-badge::after  { content:'⚡'; font-size:.75em; }
+
+    .hero-logo {
+      font-family:var(--font-display);
+      font-size:clamp(5rem,14vw,10rem);
+      font-weight:800; letter-spacing:.06em;
+      background:linear-gradient(135deg, #b8f4ff 0%, #30dcff 30%, #00c8f0 55%, #ccff00 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+      filter:drop-shadow(0 0 35px rgba(0,200,240,.55));
+      line-height:1; margin-bottom:.8rem;
+    }
+    .hero-tagline {
+      font-family:var(--font-mono); font-size:clamp(.82rem,1.8vw,1rem);
+      color:#4a68cc; letter-spacing:.1em; margin-bottom:.5rem;
+    }
+    .hero-quote {
+      font-family:var(--font-display); font-size:clamp(1rem,2vw,1.2rem);
+      font-weight:600;
+      color:rgba(212,220,248,.78);
+      margin-bottom:2.5rem; line-height:1.65;
+      border-left:2px solid rgba(0,200,240,.38);
+      padding-left:1.2rem; text-align:left;
+    }
+    .trait-pills { display:flex; flex-wrap:wrap; gap:.45rem; justify-content:center; margin-bottom:2.5rem; }
+    .trait-pill {
+      font-family:var(--font-mono); font-size:.62rem;
+      letter-spacing:.1em; padding:.28rem .82rem; border-radius:2px;
+      border:1px solid rgba(0,200,240,.24);
+      color:#4a68cc; background:rgba(0,200,240,.06);
+      text-transform:uppercase; transition:all .2s;
+    }
+    .trait-pill:hover { border-color:rgba(48,220,255,.58); color:#30dcff; background:rgba(0,200,240,.14); }
+    .cta-btn {
+      display:inline-flex; align-items:center; gap:.6rem;
+      font-family:var(--font-mono); font-size:.76rem;
+      letter-spacing:.14em; text-decoration:none; padding:.9rem 2.4rem;
+      border:1px solid rgba(0,200,240,.48); border-radius:2px;
+      color:#30dcff; background:rgba(0,200,240,.1);
+      text-transform:uppercase; transition:all .28s;
+    }
+    .cta-btn:hover {
+      background:rgba(0,200,240,.24); border-color:#30dcff; color:#fff;
+      box-shadow:0 0 32px rgba(0,200,240,.4), 0 0 64px rgba(0,200,240,.15);
+    }
+    .scroll-indicator {
+      position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+      font-family:var(--font-mono); font-size:.6rem;
+      letter-spacing:.15em; text-transform:uppercase;
+      color:rgba(74,104,204,.4); display:flex; flex-direction:column; align-items:center; gap:.4rem;
+    }
+    .scroll-indicator::after {
+      content:''; width:1px; height:40px;
+      background:linear-gradient(to bottom, rgba(0,200,240,.45), transparent);
+      animation:scroll-grow 2s ease-in-out infinite;
+    }
+    @keyframes scroll-grow { 0%,100% { height:20px; opacity:.3; } 50% { height:52px; opacity:.9; } }
+
+    /* ── Stats Row ── */
+    .stats-row {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      border-top:1px solid rgba(0,200,240,.13);
+      border-bottom:1px solid rgba(0,200,240,.13);
+      background:rgba(8,8,15,.68); backdrop-filter:blur(14px);
+    }
+    .stat-cell {
+      padding:2.2rem 1rem; text-align:center;
+      border-right:1px solid rgba(0,200,240,.1);
+    }
+    .stat-cell:last-child { border-right:none; }
+    .stat-value {
+      font-family:var(--font-display); font-size:clamp(1.8rem,4vw,2.8rem);
+      font-weight:800; color:#00c8f0; display:block; margin-bottom:.3rem;
+    }
+    .stat-label {
+      font-family:var(--font-mono); font-size:.6rem;
+      letter-spacing:.14em; color:#2d48b0; text-transform:uppercase;
+    }
+
+    /* ── Letters Grid ── */
+    .letters-section { padding:6rem 1.5rem; max-width:1200px; margin:0 auto; }
+    .letters-title {
+      font-family:var(--font-display); font-size:clamp(1.4rem,3vw,2rem);
+      font-weight:800; letter-spacing:.12em; color:#00c8f0;
+      text-align:center; margin-bottom:.5rem;
+    }
+    .letters-subtitle {
+      font-family:var(--font-mono); font-size:.88rem;
+      color:#2d48b0; text-align:center; margin-bottom:3.5rem;
+    }
+    .letters-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+      gap:1px; border:1px solid rgba(0,200,240,.13); overflow:hidden;
+    }
+    .letter-block {
+      padding:2.5rem 1.8rem; background:rgba(8,8,15,.58);
+      border-right:1px solid rgba(0,200,240,.08);
+      transition:background .3s; position:relative; overflow:hidden;
+    }
+    .letter-block:last-child { border-right:none; }
+    .letter-block::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(to right, transparent, var(--lb-accent,rgba(0,200,240,.5)), transparent);
+      transform:scaleX(0); transition:transform .3s; transform-origin:center;
+    }
+    .letter-block:hover::before { transform:scaleX(1); }
+    .letter-block:hover { background:rgba(0,200,240,.06); }
+    .letter-char {
+      font-family:var(--font-display); font-size:3.5rem; font-weight:800;
+      color:var(--lb-accent, #30dcff); display:block;
+      margin-bottom:.4rem; line-height:1;
+      text-shadow:0 0 20px var(--lb-shadow, rgba(0,200,240,.55));
+    }
+    .letter-name {
+      font-family:var(--font-mono); font-size:.62rem;
+      letter-spacing:.14em; color:#4a68cc; text-transform:uppercase;
+      margin-bottom:.8rem; display:block;
+    }
+    .letter-desc { font-family:var(--font-body); font-size:.83rem; color:#2d48b0; line-height:1.66; }
+
+    /* ── Debate Arena Cards ── */
+    .arena-section { padding:6rem 1.5rem; max-width:1200px; margin:0 auto; }
+    .section-label {
+      font-family:var(--font-mono); font-size:.62rem;
+      letter-spacing:.2em; color:#00a0c8; text-transform:uppercase;
+      margin-bottom:.4rem;
+      display:flex; align-items:center; gap:.8rem;
+    }
+    .section-label::before { content:'⚡'; font-size:.8em; }
+    .section-title {
+      font-family:var(--font-display); font-size:clamp(1.6rem,3.5vw,2.4rem);
+      font-weight:800; color:#b8f4ff; margin-bottom:.6rem; line-height:1.1;
+    }
+    .section-desc {
+      font-family:var(--font-body); font-size:.9rem; color:#2d48b0;
+      max-width:580px; margin-bottom:3rem; line-height:1.76;
+    }
+    .arena-cards {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1px; border:1px solid rgba(0,200,240,.12); overflow:hidden;
+    }
+    .arena-card {
+      padding:2.5rem 2rem; background:rgba(8,8,15,.62);
+      position:relative; overflow:hidden; transition:background .3s;
+    }
+    .arena-card:hover { background:rgba(0,200,240,.06); }
+    .arena-card::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+      background:linear-gradient(to right, transparent, var(--ac-color, rgba(0,200,240,.5)), transparent);
+      transform:scaleX(0); transition:transform .45s;
+    }
+    .arena-card:hover::after { transform:scaleX(1); }
+    .arena-card-icon {
+      width:44px; height:44px; margin-bottom:1.4rem;
+      display:flex; align-items:center; justify-content:center;
+      border:1px solid var(--ac-border, rgba(0,200,240,.28));
+      font-size:1.3rem; font-family:var(--font-mono);
+      color:var(--ac-color, #30dcff);
+    }
+    .arena-card-title {
+      font-family:var(--font-display); font-size:.9rem; font-weight:800;
+      letter-spacing:.1em; color:var(--ac-color, #30dcff); margin-bottom:.8rem;
+      text-transform:uppercase;
+    }
+    .arena-card-text { font-family:var(--font-body); font-size:.85rem; color:#2d48b0; line-height:1.74; }
+
+    /* ── Codex Box ── */
+    .codex-box {
+      max-width:780px; margin:0 auto 6rem;
+      border:1px solid rgba(0,200,240,.18);
+      background:rgba(8,8,15,.74);
+      backdrop-filter:blur(16px);
+      padding:2.5rem;
+    }
+    .codex-title {
+      font-family:var(--font-mono); font-size:.65rem;
+      letter-spacing:.18em; color:#00c8f0; text-transform:uppercase;
+      margin-bottom:1.6rem;
+      display:flex; align-items:center; gap:.8rem;
+    }
+    .codex-title::before { content:'//'; color:rgba(0,200,240,.4); }
+    .codex-row {
+      display:grid; grid-template-columns:110px 1fr;
+      gap:1rem; align-items:start;
+      padding:.9rem 0; border-bottom:1px solid rgba(0,200,240,.08);
+    }
+    .codex-row:last-child { border-bottom:none; }
+    .codex-key {
+      font-family:var(--font-mono); font-size:.62rem;
+      letter-spacing:.1em; color:#00a0c8; text-transform:uppercase; padding-top:.1rem;
+    }
+    .codex-val { font-family:var(--font-body); font-size:.86rem; color:#4a68cc; line-height:1.66; }
+    .codex-val strong { color:#7aecff; font-weight:600; }
+
+    /* ── Origin ── */
+    .origin-section {
+      padding:5rem 1.5rem; max-width:780px; margin:0 auto; text-align:center;
+    }
+    .origin-glyph {
+      font-family:var(--font-display); font-size:3.5rem; font-weight:800;
+      color:rgba(0,200,240,.28); margin-bottom:1rem; display:block;
+      letter-spacing:.1em;
+    }
+    .origin-title {
+      font-family:var(--font-display); font-size:clamp(1.4rem,3vw,2rem);
+      font-weight:800; color:#b8f4ff; margin-bottom:1.2rem;
+    }
+    .origin-text {
+      font-family:var(--font-body); font-size:.9rem;
+      color:#2d48b0; line-height:1.88; margin-bottom:1rem;
+    }
+
+    /* ── Contact ── */
+    .contact-section {
+      padding:7rem 1.5rem; text-align:center;
+      border-top:1px solid rgba(0,200,240,.1);
+    }
+    .contact-label {
+      font-family:var(--font-mono); font-size:.62rem;
+      letter-spacing:.2em; color:#00a0c8; text-transform:uppercase; margin-bottom:1rem;
+    }
+    .contact-title {
+      font-family:var(--font-display); font-size:clamp(1.6rem,4vw,2.8rem);
+      font-weight:800; color:#b8f4ff; margin-bottom:.7rem;
+    }
+    .contact-sub { font-family:var(--font-body); font-size:.9rem; color:#2d48b0; margin-bottom:2.5rem; }
+    .contact-email {
+      display:inline-flex; align-items:center; gap:.7rem;
+      font-family:var(--font-mono); font-size:clamp(.82rem,1.8vw,1rem);
+      letter-spacing:.08em; color:#30dcff;
+      text-decoration:none;
+      border:1px solid rgba(0,200,240,.3);
+      padding:1rem 2.6rem; border-radius:2px;
+      background:rgba(0,200,240,.08);
+      transition:all .28s;
+    }
+    .contact-email:hover {
+      background:rgba(0,200,240,.22); border-color:#30dcff; color:#fff;
+      box-shadow:0 0 34px rgba(0,200,240,.35);
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      border-top:1px solid rgba(0,200,240,.1);
+      padding:2rem 2.5rem;
+      display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+      background:rgba(8,8,15,.94);
+    }
+    .footer-copy {
+      font-family:var(--font-mono); font-size:.6rem;
+      letter-spacing:.12em; color:#1c308e; text-transform:uppercase;
+    }
+
+    /* ── Animations ── */
+    .fade-up { opacity:0; transform:translateY(28px); transition:opacity .75s ease, transform .75s ease; }
+    .fade-up.visible { opacity:1; transform:translateY(0); }
+
+    @keyframes fade-in { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    .hero-content > * { animation:fade-in .85s ease both; }
+    .hero-content > *:nth-child(1) { animation-delay:.1s; }
+    .hero-content > *:nth-child(2) { animation-delay:.25s; }
+    .hero-content > *:nth-child(3) { animation-delay:.4s; }
+    .hero-content > *:nth-child(4) { animation-delay:.55s; }
+    .hero-content > *:nth-child(5) { animation-delay:.7s; }
+    .hero-content > *:nth-child(6) { animation-delay:.85s; }
+  </style>
+</head>
+<body>
+
+<canvas id="spark-canvas"></canvas>
+<div class="volt-overlay"  aria-hidden="true"></div>
+<div class="noise-layer"   aria-hidden="true"></div>
+<div class="vignette"      aria-hidden="true"></div>
+
+<div class="site-wrapper">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="glass-header flex items-center justify-between px-8 py-5">
+    <a href="/" class="logo-entp">ENTP</a>
+    <nav class="hidden sm:flex gap-10">
+      <a href="#letters" class="nav-link">LETTERS</a>
+      <a href="#arena"   class="nav-link">ARENA</a>
+      <a href="#contact" class="nav-link">CONTACT</a>
+    </nav>
+    <div class="domain-badge hidden sm:block">entp.kr</div>
+  </header>
+
+  <!-- ═══ MAIN ═══ -->
+  <main>
+
+    <!-- HERO -->
+    <section class="hero-section">
+      <div class="hero-bg-text" aria-hidden="true">ENTP</div>
+      <div class="arc-ring"     aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <div class="hero-badge">THE DEBATER</div>
+        <div class="hero-logo">ENTP</div>
+        <p class="hero-tagline">Extraverted · Intuitive · Thinking · Prospecting</p>
+        <blockquote class="hero-quote">
+          "모든 규칙은 깨지기 위해 존재하고,<br>
+          모든 논쟁은 더 나은 아이디어를 낳는다."
+        </blockquote>
+        <div class="trait-pills">
+          <span class="trait-pill">INNOVATIVE</span>
+          <span class="trait-pill">WITTY</span>
+          <span class="trait-pill">CHALLENGER</span>
+          <span class="trait-pill">VISIONARY</span>
+          <span class="trait-pill">ADAPTABLE</span>
+          <span class="trait-pill">DISRUPTIVE</span>
+        </div>
+        <a href="#arena" class="cta-btn">
+          <span>⚡ ENTER THE ARENA</span>
+        </a>
+      </div>
+
+      <div class="scroll-indicator" aria-hidden="true">SCROLL</div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-row fade-up">
+      <div class="stat-cell">
+        <span class="stat-value">3%</span>
+        <span class="stat-label">Of Population</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-value">Ne</span>
+        <span class="stat-label">Dominant Function</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-value">∞</span>
+        <span class="stat-label">Devil's Advocates</span>
+      </div>
+    </div>
+
+    <!-- LETTERS -->
+    <section id="letters" class="letters-section fade-up">
+      <p class="letters-title">E · N · T · P</p>
+      <p class="letters-subtitle">// The four vectors of the Debater's mind</p>
+      <div class="letters-grid">
+        <div class="letter-block" style="--lb-accent:#30dcff; --lb-shadow:rgba(0,200,240,.5);">
+          <span class="letter-char">E</span>
+          <span class="letter-name">Extraverted</span>
+          <p class="letter-desc">사람과의 충돌에서 에너지를 얻는다. 토론과 논쟁은 공격이 아니라 지적 유희다. 무대가 클수록 더 빛난다.</p>
+        </div>
+        <div class="letter-block" style="--lb-accent:#ccff00; --lb-shadow:rgba(204,255,0,.45);">
+          <span class="letter-char">N</span>
+          <span class="letter-name">Intuitive</span>
+          <p class="letter-desc">패턴과 가능성의 바다를 헤엄친다. Ne는 동시에 수십 개의 아이디어를 생성하며, 예상치 못한 연결을 찾아낸다.</p>
+        </div>
+        <div class="letter-block" style="--lb-accent:#7aecff; --lb-shadow:rgba(122,236,255,.4);">
+          <span class="letter-char">T</span>
+          <span class="letter-name">Thinking</span>
+          <p class="letter-desc">논리의 날카로운 칼날로 모든 주장을 해부한다. 감정적 호소보다 냉철한 분석이 진실에 더 가깝다고 믿는다.</p>
+        </div>
+        <div class="letter-block" style="--lb-accent:#ffaa40; --lb-shadow:rgba(255,170,64,.4);">
+          <span class="letter-char">P</span>
+          <span class="letter-name">Prospecting</span>
+          <p class="letter-desc">계획보다 가능성을 택한다. 열린 결말을 유지하며 더 나은 선택지가 나타나면 언제든 방향을 전환할 준비가 되어 있다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARENA CARDS -->
+    <section id="arena" class="arena-section fade-up">
+      <p class="section-label">Core Weapons</p>
+      <h2 class="section-title">논쟁자의 세 가지 무기</h2>
+      <p class="section-desc">ENTP는 Ne의 폭발적 직관과 Ti의 정밀한 논리로 기존 시스템을 해체하고 재조립하는 타고난 혁신가다. 그들의 토론은 파괴가 아닌 창조다.</p>
+      <div class="arena-cards">
+        <div class="arena-card" style="--ac-color:#30dcff; --ac-border:rgba(48,220,255,.28);">
+          <div class="arena-card-icon">⚡</div>
+          <h3 class="arena-card-title">INNOVATION</h3>
+          <p class="arena-card-text">Ne 지배 기능이 동시에 수십 개의 가능성을 탐색한다. 기존 아이디어를 비틀고, 연결하고, 해체하여 완전히 새로운 것을 만들어낸다.</p>
+        </div>
+        <div class="arena-card" style="--ac-color:#ccff00; --ac-border:rgba(204,255,0,.28);">
+          <div class="arena-card-icon">◈</div>
+          <h3 class="arena-card-title">WIT</h3>
+          <p class="arena-card-text">번개처럼 빠른 재치로 대화의 흐름을 장악한다. 유머와 도발의 경계에서 유영하며, 상대방이 미처 생각하지 못한 각도에서 질문을 던진다.</p>
+        </div>
+        <div class="arena-card" style="--ac-color:#ffaa40; --ac-border:rgba(255,170,64,.28);">
+          <div class="arena-card-icon">▲</div>
+          <h3 class="arena-card-title">CHALLENGE</h3>
+          <p class="arena-card-text">어떤 주장도 검증 없이 받아들이지 않는다. 악마의 변호인 역할을 자처하며 모든 시스템의 약점을 찾아내고, 더 강한 버전으로 재건한다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODEX BOX -->
+    <div class="codex-box fade-up px-6">
+      <p class="codex-title">DEBATER_PROFILE.log</p>
+      <div class="codex-row">
+        <span class="codex-key">D01</span>
+        <span class="codex-val"><strong>Ne 지배</strong> — 외향 직관이 일차 기능. 아이디어 간의 즉각적 연결을 생성하며, 현재보다 미래 가능성에 집중하는 발산적 사고 엔진.</span>
+      </div>
+      <div class="codex-row">
+        <span class="codex-key">D02</span>
+        <span class="codex-val"><strong>인구 비율</strong> — 전체 인구의 약 3%. 남성 비율이 약간 높으며 (남 4%, 여 2%), 기업가·발명가·법률가 분야에 집중된다.</span>
+      </div>
+      <div class="codex-row">
+        <span class="codex-key">D03</span>
+        <span class="codex-val"><strong>그림자</strong> — Si 열등 기능으로 인해 루틴과 세부사항 관리가 취약하다. 아이디어 생성에만 집중하고 완성과 실행을 회피하는 경향이 있다.</span>
+      </div>
+      <div class="codex-row">
+        <span class="codex-key">D04</span>
+        <span class="codex-val"><strong>핵심 욕구</strong> — 지적 자극과 자율성. 도전할 수 없는 환경, 창의성을 억압하는 규칙, 지적 대등함이 없는 관계에서 급격히 에너지를 잃는다.</span>
+      </div>
+    </div>
+
+    <!-- ORIGIN -->
+    <section class="origin-section fade-up">
+      <span class="origin-glyph">辯</span>
+      <h2 class="origin-title">The Debater's Manifesto</h2>
+      <p class="origin-text">
+        ENTP는 인류의 지적 진보를 이끄는 원동력 중 하나다. 전 세계 인구의 약 3%를 차지하는 이들은 Ne의 폭발적 직관으로 무한한 가능성을 탐색하고, Ti의 냉철한 논리로 그것을 검증한다. 불편한 질문을 던지고, 당연한 것에 의문을 제기하며, 기존 시스템의 허점을 찾아내는 것이 그들의 본능이다.
+      </p>
+      <p class="origin-text">
+        토론은 ENTP에게 공격이 아니다. 그것은 진실을 향한 가장 빠른 길이며, 더 나은 아이디어를 연마하는 숫돌이다. 논쟁자가 존재하는 곳에서 아이디어는 죽지 않는다 — 단지 더 강해질 뿐이다.
+      </p>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="contact-section fade-up">
+      <p class="contact-label">// Open Channel</p>
+      <h2 class="contact-title">Challenge the Debater</h2>
+      <p class="contact-sub">더 나은 주장이 있다면, 도전을 환영한다.</p>
+      <a href="mailto:hello@entp.kr" class="contact-email">
+        <span style="opacity:.55;">⚡</span>
+        hello@entp.kr
+      </a>
+    </section>
+
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="site-footer">
+    <span class="footer-copy">© 2026 entp.kr — All rights reserved.</span>
+    <span class="footer-copy" style="opacity:0.38;">innovation · wit · challenge · disruption</span>
+  </footer>
+
+</div><!-- /.site-wrapper -->
+
+<script>
+(function () {
+  /* ─── Canvas Setup ─── */
+  const canvas = document.getElementById('spark-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', () => { resize(); rebuildAll(); });
+  resize();
+
+  /* ─── Palette ─── */
+  const CYAN   = 'rgba(0,200,240,';
+  const VOLT   = 'rgba(204,255,0,';
+  const ORANGE = 'rgba(255,136,0,';
+  const NAVY   = 'rgba(74,104,204,';
+  const WHITE  = 'rgba(255,255,255,';
+
+  /* ─── Utility ─── */
+  const rand  = (a, b) => Math.random() * (b - a) + a;
+  const randI = (a, b) => Math.floor(rand(a, b));
+  const pick  = arr => arr[randI(0, arr.length)];
+
+  /* ══════════════════════════════════
+     CLASS 1: ElectronArc — 전자 아크 방전선
+     수량: 22
+  ══════════════════════════════════ */
+  class ElectronArc {
+    constructor() { this.init(); }
+    init() {
+      this.x1 = rand(0, canvas.width);
+      this.y1 = rand(0, canvas.height);
+      /* zigzag path: 3-5 segments */
+      this.segs = randI(3, 6);
+      this.pts  = [{ x: this.x1, y: this.y1 }];
+      let cx = this.x1, cy = this.y1;
+      for (let i = 0; i < this.segs; i++) {
+        cx += rand(-120, 120);
+        cy += rand(-80, 80);
+        this.pts.push({ x: cx, y: cy });
+      }
+      this.alpha  = rand(0.06, 0.22);
+      this.life   = 0;
+      this.maxLife = randI(18, 55);
+      this.color  = pick([CYAN, VOLT, WHITE]);
+      this.width  = rand(0.5, 1.5);
+    }
+    update() {
+      this.life++;
+      if (this.life > this.maxLife) this.init();
+    }
+    draw() {
+      const progress = this.life / this.maxLife;
+      const a = this.alpha * Math.sin(progress * Math.PI);
+      ctx.strokeStyle = this.color + a + ')';
+      ctx.lineWidth   = this.width;
+      ctx.shadowBlur  = 8;
+      ctx.shadowColor = this.color + '0.4)';
+      ctx.beginPath();
+      ctx.moveTo(this.pts[0].x, this.pts[0].y);
+      for (let i = 1; i < this.pts.length; i++) {
+        ctx.lineTo(this.pts[i].x, this.pts[i].y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  /* ══════════════════════════════════
+     CLASS 2: IdeaSpark — 아이디어 스파크 점
+     수량: 65
+  ══════════════════════════════════ */
+  class IdeaSpark {
+    constructor() { this.init(); }
+    init() {
+      this.x     = rand(0, canvas.width);
+      this.y     = rand(0, canvas.height);
+      this.vx    = rand(-0.8, 0.8);
+      this.vy    = rand(-0.8, 0.8);
+      this.r     = rand(0.8, 2.5);
+      this.alpha = rand(0.08, 0.35);
+      this.decay = rand(0.002, 0.006);
+      this.color = pick([CYAN, VOLT, ORANGE, WHITE]);
+      /* occasional cross shape */
+      this.cross = Math.random() > 0.78;
+    }
+    update() {
+      this.x     += this.vx;
+      this.y     += this.vy;
+      this.alpha -= this.decay;
+      if (this.alpha <= 0 || this.x < -10 || this.x > canvas.width + 10 ||
+          this.y < -10 || this.y > canvas.height + 10) this.init();
+    }
+    draw() {
+      if (this.cross) {
+        const s = this.r * 3;
+        ctx.strokeStyle = this.color + this.alpha + ')';
+        ctx.lineWidth   = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(this.x - s, this.y); ctx.lineTo(this.x + s, this.y);
+        ctx.moveTo(this.x, this.y - s); ctx.lineTo(this.x, this.y + s);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.color + this.alpha + ')';
+        ctx.fill();
+      }
+    }
+  }
+
+  /* ══════════════════════════════════
+     CLASS 3: ThoughtVector — 사고 벡터 화살표
+     수량: 18
+  ══════════════════════════════════ */
+  class ThoughtVector {
+    constructor() { this.init(); }
+    init() {
+      this.x      = rand(canvas.width  * 0.05, canvas.width  * 0.95);
+      this.y      = rand(canvas.height * 0.05, canvas.height * 0.95);
+      this.angle  = rand(0, Math.PI * 2);
+      this.len    = rand(35, 110);
+      this.speed  = rand(0.012, 0.028);
+      this.alpha  = rand(0.05, 0.18);
+      this.life   = 0;
+      this.maxLife = randI(120, 380);
+      this.color  = pick([CYAN, VOLT, ORANGE, NAVY]);
+    }
+    update() {
+      this.angle += this.speed;
+      this.life++;
+      if (this.life > this.maxLife) this.init();
+    }
+    draw() {
+      const fi = Math.min(1, this.life / 30);
+      const fo = Math.min(1, (this.maxLife - this.life) / 30);
+      const a  = this.alpha * fi * fo;
+      const ex = this.x + Math.cos(this.angle) * this.len;
+      const ey = this.y + Math.sin(this.angle) * this.len;
+
+      ctx.strokeStyle = this.color + a + ')';
+      ctx.lineWidth   = 1;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+
+      /* arrowhead */
+      const na = this.angle + Math.PI;
+      const hl = 9;
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex + Math.cos(na - 0.42) * hl, ey + Math.sin(na - 0.42) * hl);
+      ctx.lineTo(ex + Math.cos(na + 0.42) * hl, ey + Math.sin(na + 0.42) * hl);
+      ctx.closePath();
+      ctx.fillStyle = this.color + a + ')';
+      ctx.fill();
+    }
+  }
+
+  /* ══════════════════════════════════
+     CLASS 4: PlasmaBurst — 플라즈마 폭발 링
+     수량: 12
+  ══════════════════════════════════ */
+  class PlasmaBurst {
+    constructor() { this.init(); }
+    init() {
+      this.x      = rand(canvas.width  * 0.1, canvas.width  * 0.9);
+      this.y      = rand(canvas.height * 0.1, canvas.height * 0.9);
+      this.r      = rand(5, 20);
+      this.maxR   = this.r + rand(60, 160);
+      this.alpha  = rand(0.06, 0.2);
+      this.expand = rand(0.6, 1.8);
+      this.color  = pick([CYAN, VOLT]);
+      this.life   = 0;
+      this.maxLife = randI(80, 200);
+    }
+    update() {
+      this.r    += this.expand;
+      this.life++;
+      if (this.r > this.maxR || this.life > this.maxLife) this.init();
+    }
+    draw() {
+      const p = this.life / this.maxLife;
+      const a = this.alpha * (1 - p);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.strokeStyle = this.color + a + ')';
+      ctx.lineWidth   = 1.2;
+      ctx.stroke();
+    }
+  }
+
+  /* ─── Pool Init ─── */
+  let arcs, sparks, vectors, bursts;
+
+  function rebuildAll() {
+    arcs    = Array.from({ length: 22 }, () => new ElectronArc());
+    sparks  = Array.from({ length: 65 }, () => new IdeaSpark());
+    vectors = Array.from({ length: 18 }, () => new ThoughtVector());
+    bursts  = Array.from({ length: 12 }, () => new PlasmaBurst());
+  }
+  rebuildAll();
+
+  /* ─── Animation Loop ─── */
+  function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bursts.forEach (p => { p.update(); p.draw(); });
+    arcs.forEach   (p => { p.update(); p.draw(); });
+    vectors.forEach(p => { p.update(); p.draw(); });
+    sparks.forEach (p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  /* ─── Scroll Fade-up ─── */
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    }),
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+})();
+</script>
+
+</body>
+</html>
