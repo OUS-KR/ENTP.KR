@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENTP — entp.kr</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style type="text/tailwindcss">
+    @theme {
+      --color-spark-300:  #fdba74;
+      --color-spark-400:  #fb923c;
+      --color-spark-500:  #f97316;
+      --color-volt-300:   #d9f99d;
+      --color-volt-400:   #bef264;
+      --color-volt-500:   #a3e635;
+      --color-plasma-300: #f0abfc;
+      --color-plasma-400: #e879f9;
+      --color-plasma-500: #d946ef;
+      --color-ice-300:    #7dd3fc;
+      --color-ice-400:    #38bdf8;
+      --color-void-950:   #030209;
+      --color-void-900:   #07040f;
+      --color-void-800:   #0e0819;
+      --font-display: 'Syne', sans-serif;
+      --font-sans:    'Inter', 'Noto Serif KR', sans-serif;
+    }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #030209;
+      color: #ede8fb;
+      font-family: 'Inter', 'Noto Serif KR', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Wildfire aurora */
+    .aurora-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 55% at 15% 25%, rgba(249,115,22,0.11) 0%, transparent 58%),
+        radial-gradient(ellipse 60% 65% at 85% 75%, rgba(217,70,239,0.09) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 45% at 50% 5%,  rgba(190,242,100,0.07) 0%, transparent 48%),
+        radial-gradient(ellipse 45% 55% at 30% 80%, rgba(56,189,248,0.05) 0%, transparent 45%);
+      animation: auroraWild 13s ease-in-out infinite alternate;
+    }
+    @keyframes auroraWild {
+      0%   { opacity: 0.75; transform: scale(1) skewX(0deg); }
+      50%  { opacity: 1;    transform: scale(1.03) skewX(0.5deg); }
+      100% { opacity: 0.85; transform: scale(1.05) skewX(-0.5deg); }
+    }
+
+    /* Vignette */
+    .vignette {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(ellipse 88% 88% at 50% 50%, transparent 33%, rgba(3,2,9,0.9) 100%);
+    }
+
+    /* Chaos stripe — multi-color animated */
+    .top-stripe {
+      position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50;
+      background: linear-gradient(90deg,
+        #f97316, #bef264, #e879f9, #38bdf8, #fb923c, #d9f99d, #f0abfc, #7dd3fc, #f97316);
+      background-size: 500% 100%;
+      animation: chaosFlow 3.5s linear infinite;
+    }
+    @keyframes chaosFlow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 500% 50%; }
+    }
+
+    /* Diagonal chaos overlay */
+    .chaos-overlay {
+      position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; opacity: 0.025;
+    }
+    .chaos-overlay::before {
+      content: '';
+      position: absolute; inset: -50%;
+      background: repeating-linear-gradient(
+        -42deg,
+        transparent 0px, transparent 22px,
+        rgba(249,115,22,1) 22px, rgba(249,115,22,1) 23px
+      );
+    }
+
+    /* Particle layer */
+    #particle-layer {
+      position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden;
+    }
+    .particle {
+      position: absolute; opacity: 0;
+      animation: sparkFly var(--dur,9s) var(--delay,0s) ease-in-out infinite;
+      font-family: 'Syne', sans-serif;
+    }
+    @keyframes sparkFly {
+      0%   { transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.5);    opacity: 0; }
+      8%   { opacity: 0.8; }
+      45%  { transform: translateY(45vh) translateX(var(--dx,40px)) rotate(180deg) scale(1.1); }
+      92%  { opacity: 0.25; }
+      100% { transform: translateY(-8vh) translateX(var(--dx2,-30px)) rotate(360deg) scale(0.7); opacity: 0; }
+    }
+
+    /* Corner decor */
+    .corner-decor {
+      position: fixed; width: 72px; height: 72px; z-index: 4; pointer-events: none; opacity: 0.2;
+    }
+    .corner-tl { top: 10px; left: 10px; }
+    .corner-tr { top: 10px; right: 10px; transform: scaleX(-1); }
+    .corner-bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+    .corner-br { bottom: 10px; right: 10px; transform: scale(-1,-1); }
+
+    /* Main */
+    .main { position: relative; z-index: 10; max-width: 480px; margin: 0 auto; padding: 60px 16px 40px; }
+
+    /* Section card */
+    .section-card {
+      background: rgba(7,4,15,0.82);
+      border: 1px solid rgba(249,115,22,0.16);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.65), inset 0 1px 0 rgba(249,115,22,0.08);
+    }
+
+    /* Avatar ring */
+    .avatar-ring {
+      width: 110px; height: 110px; border-radius: 50%; padding: 3px;
+      background: conic-gradient(#f97316, #bef264, #e879f9, #38bdf8, #fb923c, #f97316);
+      animation: ringRotate 5s linear infinite;
+      margin: 0 auto 16px; position: relative;
+    }
+    @keyframes ringRotate { to { transform: rotate(360deg); } }
+    .avatar-ring img {
+      width: 100%; height: 100%; border-radius: 50%;
+      border: 3px solid #030209; object-fit: cover;
+    }
+    .status-dot {
+      position: absolute; bottom: 5px; right: 5px;
+      width: 15px; height: 15px; border-radius: 50%;
+      background: #bef264; border: 2px solid #030209;
+      animation: dotSpark 1.8s ease-in-out infinite;
+    }
+    @keyframes dotSpark {
+      0%,100% { box-shadow: 0 0 0 0 rgba(190,242,100,0.6); }
+      50%      { box-shadow: 0 0 0 8px rgba(190,242,100,0); }
+    }
+
+    /* Shimmer text */
+    .shimmer-text {
+      background: linear-gradient(90deg, #f97316, #bef264, #e879f9, #38bdf8, #f97316);
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 3s linear infinite;
+    }
+    @keyframes shimmer { 0%{background-position:0% 50%;} 100%{background-position:300% 50%;} }
+
+    /* Tag pills */
+    .tag {
+      display: inline-block; padding: 3px 11px; border-radius: 999px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+      border: 1px solid; margin: 3px;
+    }
+
+    /* Type cards */
+    .type-card {
+      background: rgba(249,115,22,0.08);
+      border: 1px solid rgba(249,115,22,0.22);
+      border-radius: 12px; padding: 12px 6px; text-align: center; flex: 1;
+    }
+
+    /* Link buttons */
+    .link-btn {
+      display: flex; align-items: center; gap: 13px;
+      width: 100%; padding: 13px 16px; border-radius: 13px;
+      border: 1px solid rgba(249,115,22,0.18);
+      background: rgba(7,4,15,0.7);
+      color: #ede8fb; text-decoration: none;
+      font-size: 14px; font-weight: 600;
+      transition: all 0.3s ease; backdrop-filter: blur(6px);
+      margin-bottom: 9px;
+    }
+    .link-btn:hover {
+      background: rgba(249,115,22,0.13);
+      border-color: rgba(249,115,22,0.48);
+      transform: translateX(5px);
+      box-shadow: 0 0 18px rgba(249,115,22,0.16);
+    }
+    .link-btn .icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+
+    /* Progress bars */
+    .progress-track {
+      background: rgba(255,255,255,0.07); border-radius: 999px; height: 7px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 999px; width: 0%;
+      transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* Chaos meter */
+    .chaos-bar { display: flex; gap: 3px; margin-top: 6px; }
+    .chaos-seg {
+      flex: 1; height: 11px; border-radius: 2px;
+      background: rgba(249,115,22,0.09);
+      border: 1px solid rgba(249,115,22,0.15);
+      transition: all 0.35s ease;
+    }
+    .chaos-seg.lit {
+      border-color: transparent;
+      box-shadow: 0 0 5px currentColor;
+    }
+
+    /* Debate cards */
+    .debate-card {
+      background: rgba(7,4,15,0.85);
+      border: 1px solid rgba(249,115,22,0.13);
+      border-radius: 12px; padding: 13px;
+      transition: all 0.25s; margin-bottom: 9px;
+    }
+    .debate-card:last-child { margin-bottom: 0; }
+    .debate-card:hover {
+      border-color: rgba(249,115,22,0.4);
+      background: rgba(249,115,22,0.06);
+    }
+
+    /* Devil's advocate items */
+    .devil-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid rgba(249,115,22,0.08);
+      font-size: 13px; color: #a39ab8;
+    }
+    .devil-item:last-child { border-bottom: none; }
+    .side-badge {
+      font-size: 10px; padding: 2px 8px; border-radius: 4px;
+      font-weight: 700; flex-shrink: 0; margin-top: 1px;
+      font-family: 'Syne', sans-serif; letter-spacing: 0.06em;
+    }
+
+    /* Invention grid */
+    .invent-card {
+      background: rgba(249,115,22,0.05);
+      border: 1px solid rgba(249,115,22,0.12);
+      border-radius: 13px; padding: 14px; text-align: center;
+      transition: all 0.3s;
+    }
+    .invent-card:hover {
+      border-color: rgba(232,121,249,0.4);
+      background: rgba(232,121,249,0.08);
+      transform: translateY(-3px);
+    }
+
+    /* Carousel */
+    .carousel-wrapper { position: relative; overflow: hidden; border-radius: 14px; }
+    .carousel-track { display: flex; transition: transform 0.48s cubic-bezier(0.4,0,0.2,1); }
+    .carousel-slide { min-width: 100%; position: relative; }
+    .carousel-slide img { width: 100%; height: 210px; object-fit: cover; display: block; }
+    .carousel-caption {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 14px;
+      background: linear-gradient(transparent, rgba(3,2,9,0.9));
+      font-size: 12px; color: #fb923c;
+    }
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(3,2,9,0.65); border: 1px solid rgba(249,115,22,0.32);
+      color: #f97316; width: 34px; height: 34px; border-radius: 50%;
+      cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; backdrop-filter: blur(4px);
+    }
+    .carousel-btn:hover { background: rgba(249,115,22,0.22); }
+    .carousel-prev { left: 8px; }
+    .carousel-next { right: 8px; }
+    .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+    .carousel-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(249,115,22,0.28); cursor: pointer; transition: all 0.2s;
+    }
+    .carousel-dot.active { background: #f97316; transform: scale(1.35); }
+
+    /* Music player */
+    .vinyl {
+      width: 78px; height: 78px; border-radius: 50%; flex-shrink: 0;
+      background: conic-gradient(
+        #0d050e 0deg, #1e0a1e 60deg, #0d050e 120deg,
+        #280d14 180deg, #0d050e 240deg, #1e0a1e 300deg, #0d050e 360deg
+      );
+      position: relative; cursor: pointer;
+      border: 3px solid rgba(249,115,22,0.32);
+    }
+    .vinyl::after {
+      content: ''; position: absolute; inset: 30%;
+      border-radius: 50%; background: #f97316;
+      box-shadow: 0 0 10px rgba(249,115,22,0.7);
+    }
+    .vinyl.playing { animation: vinylSpin 4s linear infinite; }
+    @keyframes vinylSpin { to { transform: rotate(360deg); } }
+    .track-item {
+      display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px;
+      cursor: pointer; transition: background 0.2s; font-size: 13px;
+    }
+    .track-item:hover { background: rgba(249,115,22,0.09); }
+    .track-item.active { background: rgba(249,115,22,0.16); color: #f97316; }
+
+    /* Project cards */
+    .project-card {
+      background: rgba(7,4,15,0.88);
+      border: 1px solid rgba(249,115,22,0.12);
+      border-radius: 13px; padding: 15px;
+      transition: all 0.3s; cursor: pointer;
+    }
+    .project-card:hover {
+      border-color: rgba(232,121,249,0.42);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(249,115,22,0.1);
+    }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 22px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(180deg, #f97316, #e879f9, #38bdf8, transparent);
+    }
+    .timeline-item { position: relative; margin-bottom: 20px; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -19px; top: 5px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #f97316; border: 2px solid #bef264;
+      box-shadow: 0 0 8px rgba(249,115,22,0.6);
+    }
+
+    /* FAQ */
+    details { border-bottom: 1px solid rgba(249,115,22,0.11); }
+    details summary {
+      padding: 13px 0; cursor: pointer; font-weight: 600; font-size: 14px;
+      list-style: none; display: flex; justify-content: space-between; align-items: center;
+      color: #fdba74;
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::after { content: '+'; color: #f97316; font-size: 18px; }
+    details[open] summary::after { content: '−'; }
+    details p { padding: 0 0 13px; font-size: 13px; color: #6b5a7a; line-height: 1.78; }
+
+    /* Forms */
+    .form-input {
+      width: 100%; background: rgba(7,4,15,0.88);
+      border: 1px solid rgba(249,115,22,0.2);
+      color: #ede8fb; border-radius: 10px; padding: 11px 13px;
+      font-size: 14px; outline: none; transition: border-color 0.2s;
+      margin-bottom: 10px;
+    }
+    .form-input:focus { border-color: rgba(249,115,22,0.55); }
+    .form-input option { background: #0e0819; }
+    .btn-submit {
+      width: 100%; padding: 13px; border-radius: 11px; border: none; cursor: pointer;
+      font-weight: 800; font-size: 14px; letter-spacing: 0.08em;
+      background: linear-gradient(135deg, #f97316, #e879f9);
+      color: #030209; transition: all 0.3s;
+      font-family: 'Syne', sans-serif;
+    }
+    .btn-submit:hover { opacity: 0.87; transform: translateY(-2px); box-shadow: 0 6px 22px rgba(249,115,22,0.28); }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(26px); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Divider */
+    .spark-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(249,115,22,0.5), rgba(232,121,249,0.4), transparent);
+      margin: 8px 0 16px;
+    }
+
+    /* Scroll-to-top */
+    .scroll-top {
+      position: fixed; bottom: 20px; right: 20px; z-index: 100;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(249,115,22,0.13); border: 1px solid rgba(249,115,22,0.38);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; backdrop-filter: blur(4px);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .scroll-top.show { opacity: 1; }
+
+    /* Sec label */
+    .sec-label {
+      font-size: 10px; color: #4a3560; letter-spacing: 0.24em;
+      text-transform: uppercase; margin-bottom: 14px;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+    }
+
+    /* KPI chips */
+    .kpi-chip {
+      background: rgba(249,115,22,0.07);
+      border: 1px solid rgba(249,115,22,0.18);
+      border-radius: 11px; padding: 10px 12px; text-align: center; flex: 1;
+    }
+
+    /* Spark badge */
+    .spark-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 700; padding: 3px 9px;
+      border-radius: 999px; font-family: 'Syne', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="aurora-bg"></div>
+  <div class="vignette"></div>
+  <div class="chaos-overlay"></div>
+  <div class="top-stripe"></div>
+  <div id="particle-layer"></div>
+
+  <!-- Corner SVG -->
+  <svg class="corner-decor corner-tl" viewBox="0 0 72 72" fill="none">
+    <path d="M4 68 L4 4 L68 4" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+    <path d="M4 36 L18 36" stroke="#bef264" stroke-width="1" opacity="0.6"/>
+    <path d="M36 4 L36 18" stroke="#e879f9" stroke-width="1" opacity="0.6"/>
+    <circle cx="4"  cy="4"  r="3"   fill="#f97316"/>
+    <circle cx="36" cy="4"  r="1.8" fill="#bef264" opacity="0.6"/>
+    <circle cx="4"  cy="36" r="1.8" fill="#e879f9" opacity="0.6"/>
+    <path d="M28 4 L32 8 L28 12" stroke="#38bdf8" stroke-width="1" opacity="0.4" fill="none"/>
+  </svg>
+  <svg class="corner-decor corner-tr" viewBox="0 0 72 72" fill="none">
+    <path d="M4 68 L4 4 L68 4" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+    <path d="M4 36 L18 36" stroke="#e879f9" stroke-width="1" opacity="0.6"/>
+    <circle cx="4" cy="4" r="3" fill="#f97316"/>
+    <path d="M28 4 L32 8 L28 12" stroke="#bef264" stroke-width="1" opacity="0.4" fill="none"/>
+  </svg>
+  <svg class="corner-decor corner-bl" viewBox="0 0 72 72" fill="none">
+    <path d="M4 68 L4 4 L68 4" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="4" cy="4" r="3" fill="#f97316"/>
+    <path d="M4 36 L18 36" stroke="#38bdf8" stroke-width="1" opacity="0.5"/>
+  </svg>
+  <svg class="corner-decor corner-br" viewBox="0 0 72 72" fill="none">
+    <path d="M4 68 L4 4 L68 4" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="4" cy="4" r="3" fill="#f97316"/>
+  </svg>
+
+  <!-- Scroll to top -->
+  <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="#f97316">
+      <path d="M7 2l5 5H2z"/>
+    </svg>
+  </div>
+
+  <main class="main">
+
+    <!-- ① HERO -->
+    <section class="section-card reveal" style="text-align:center;">
+      <p style="font-size:10px;color:#4a3560;letter-spacing:0.28em;text-transform:uppercase;margin-bottom:14px;font-family:'Syne',sans-serif;font-weight:700;">
+        ⚡ THE DEBATER ⚡
+      </p>
+      <div class="avatar-ring">
+        <img
+          src="https://api.dicebear.com/9.x/shapes/svg?seed=entp&backgroundColor=07040f&color=f97316,bef264,e879f9,38bdf8"
+          alt="ENTP Avatar"
+        />
+        <div class="status-dot"></div>
+      </div>
+      <h1 class="shimmer-text" style="font-family:'Syne',sans-serif;font-size:50px;font-weight:800;letter-spacing:0.14em;line-height:1;">ENTP</h1>
+      <p style="font-size:13px;color:#f97316;font-weight:700;margin-top:5px;letter-spacing:0.1em;font-family:'Syne',sans-serif;">entp.kr · 변론가형</p>
+      <div class="spark-divider" style="margin:14px 0;"></div>
+      <p style="font-size:13px;color:#6b5a7a;font-style:italic;line-height:1.85;margin-bottom:16px;">
+        "틀린 생각이란 없다.<br/>
+        <em style="color:#fdba74;">아직 충분히 반박되지 않았을 뿐이다.</em>"
+      </p>
+      <div style="margin-bottom:16px;">
+        <span class="tag" style="border-color:rgba(249,115,22,0.44);color:#fdba74;background:rgba(249,115,22,0.09);">#변론가</span>
+        <span class="tag" style="border-color:rgba(190,242,100,0.4);color:#d9f99d;background:rgba(190,242,100,0.08);">#발명가</span>
+        <span class="tag" style="border-color:rgba(232,121,249,0.38);color:#f0abfc;background:rgba(232,121,249,0.07);">#도발자</span>
+        <span class="tag" style="border-color:rgba(56,189,248,0.36);color:#7dd3fc;background:rgba(56,189,248,0.07);">#혁신가</span>
+      </div>
+
+      <!-- E·N·T·P type cards -->
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <div class="type-card">
+          <div style="font-size:22px;font-weight:800;color:#f97316;font-family:'Syne',sans-serif;">E</div>
+          <div style="font-size:10px;color:#4a3560;margin-top:3px;">Extroverted<br/>외향형</div>
+        </div>
+        <div class="type-card" style="border-color:rgba(190,242,100,0.24);background:rgba(190,242,100,0.07);">
+          <div style="font-size:22px;font-weight:800;color:#bef264;font-family:'Syne',sans-serif;">N</div>
+          <div style="font-size:10px;color:#4a3560;margin-top:3px;">Intuitive<br/>직관형</div>
+        </div>
+        <div class="type-card" style="border-color:rgba(232,121,249,0.24);background:rgba(232,121,249,0.06);">
+          <div style="font-size:22px;font-weight:800;color:#e879f9;font-family:'Syne',sans-serif;">T</div>
+          <div style="font-size:10px;color:#4a3560;margin-top:3px;">Thinking<br/>사고형</div>
+        </div>
+        <div class="type-card" style="border-color:rgba(56,189,248,0.24);background:rgba(56,189,248,0.06);">
+          <div style="font-size:22px;font-weight:800;color:#38bdf8;font-family:'Syne',sans-serif;">P</div>
+          <div style="font-size:10px;color:#4a3560;margin-top:3px;">Perceiving<br/>인식형</div>
+        </div>
+      </div>
+
+      <!-- Chaos Meter -->
+      <div style="text-align:left;">
+        <p class="sec-label" style="margin-bottom:5px;">아이디어 방출 속도</p>
+        <div class="chaos-bar" id="chaosMeter"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;">
+          <span style="font-size:10px;color:#2d1a3a;font-family:'Syne',sans-serif;">정지</span>
+          <span style="font-size:10px;color:#f97316;font-weight:700;font-family:'Syne',sans-serif;">OVERLOAD ⚡</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ② KPI BOARD -->
+    <section class="section-card reveal" style="border-color:rgba(190,242,100,0.2);">
+      <p class="sec-label">Debater Stats</p>
+      <div style="display:flex;gap:9px;">
+        <div class="kpi-chip">
+          <p style="font-size:20px;font-weight:800;color:#f97316;font-family:'Syne',sans-serif;">2–5%</p>
+          <p style="font-size:10px;color:#4a3560;margin-top:2px;">전 세계 인구</p>
+        </div>
+        <div class="kpi-chip" style="border-color:rgba(190,242,100,0.2);">
+          <p style="font-size:20px;font-weight:800;color:#bef264;font-family:'Syne',sans-serif;">#1</p>
+          <p style="font-size:10px;color:#4a3560;margin-top:2px;">아이디어 생산</p>
+        </div>
+        <div class="kpi-chip" style="border-color:rgba(232,121,249,0.2);">
+          <p style="font-size:20px;font-weight:800;color:#e879f9;font-family:'Syne',sans-serif;">∞</p>
+          <p style="font-size:10px;color:#4a3560;margin-top:2px;">반박 준비</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ③ ANNOUNCEMENT -->
+    <section class="section-card reveal" style="border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.05);">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:22px;flex-shrink:0;">💥</span>
+        <div>
+          <p style="font-size:10px;color:#f97316;letter-spacing:0.2em;font-weight:700;font-family:'Syne',sans-serif;">BROADCAST</p>
+          <p style="font-size:14px;color:#ede8fb;margin-top:4px;">
+            새로운 토론 시리즈 <strong style="color:#bef264;">Devil's Lab Season 5</strong> 오픈 — 당연한 것을 다시 의심하는 시간.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ④ SOCIAL LINKS -->
+    <section class="section-card reveal">
+      <p class="sec-label">Connect</p>
+      <a href="https://instagram.com/entp.kr" class="link-btn" target="_blank" rel="noopener">
+        <span class="icon" style="background:linear-gradient(135deg,#f97316,#e879f9);">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+          </svg>
+        </span>
+        <span>Instagram</span>
+        <span style="margin-left:auto;font-size:12px;color:#4a3560;">@entp.kr</span>
+      </a>
+      <a href="https://youtube.com/@entp.kr" class="link-btn" target="_blank" rel="noopener">
+        <span class="icon" style="background:#dc2626;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="white">
+            <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </span>
+        <span>YouTube</span>
+        <span style="margin-left:auto;font-size:12px;color:#4a3560;">@entp.kr</span>
+      </a>
+      <a href="https://x.com/entp_kr" class="link-btn" target="_blank" rel="noopener">
+        <span class="icon" style="background:#120a1e;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="white">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </span>
+        <span>X / Twitter</span>
+        <span style="margin-left:auto;font-size:12px;color:#4a3560;">@entp_kr</span>
+      </a>
+      <a href="https://github.com/entp-kr" class="link-btn" target="_blank" rel="noopener">
+        <span class="icon" style="background:#0d0818;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="white">
+            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+        </span>
+        <span>GitHub</span>
+        <span style="margin-left:auto;font-size:12px;color:#4a3560;">github.com/entp-kr</span>
+      </a>
+      <a href="mailto:hello@entp.kr" class="link-btn">
+        <span class="icon" style="background:linear-gradient(135deg,#f97316,#bef264);">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="white">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+        </span>
+        <span>Email</span>
+        <span style="margin-left:auto;font-size:12px;color:#4a3560;">hello@entp.kr</span>
+      </a>
+    </section>
+
+    <!-- ⑤ DEBATER TRAITS -->
+    <section class="section-card reveal">
+      <p class="sec-label">Debater Traits</p>
+      <div style="display:flex;flex-direction:column;gap:15px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:13px;font-weight:600;color:#fdba74;">⚡ 즉흥적 발상 (Spontaneous Ideas)</span>
+            <span style="font-size:13px;font-weight:700;color:#f97316;" data-target="99">0%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="background:linear-gradient(90deg,#f97316,#fb923c);" data-width="99"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:13px;font-weight:600;color:#d9f99d;">🧩 논리적 토론 (Logical Debate)</span>
+            <span style="font-size:13px;font-weight:700;color:#bef264;" data-target="97">0%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="background:linear-gradient(90deg,#84cc16,#bef264);" data-width="97"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:13px;font-weight:600;color:#f0abfc;">🔮 패턴 연결 (Pattern Connecting)</span>
+            <span style="font-size:13px;font-weight:700;color:#e879f9;" data-target="96">0%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="background:linear-gradient(90deg,#d946ef,#e879f9);" data-width="96"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:13px;font-weight:600;color:#7dd3fc;">🌊 적응 유연성 (Adaptability)</span>
+            <span style="font-size:13px;font-weight:700;color:#38bdf8;" data-target="94">0%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="background:linear-gradient(90deg,#0ea5e9,#38bdf8);" data-width="94"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑥ INVENTION GRID -->
+    <section class="section-card reveal">
+      <p class="sec-label">Cognitive Chaos Grid</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="invent-card">
+          <div style="font-size:24px;margin-bottom:8px;">💥</div>
+          <p style="font-size:12px;font-weight:700;color:#fdba74;">Idea Bomb</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">하나의 질문이 열 개의 아이디어를 폭발시킨다</p>
+        </div>
+        <div class="invent-card">
+          <div style="font-size:24px;margin-bottom:8px;">🎭</div>
+          <p style="font-size:12px;font-weight:700;color:#d9f99d;">Devil's Play</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">반대 입장을 취해 진실에 더 가까이 가는 기술</p>
+        </div>
+        <div class="invent-card">
+          <div style="font-size:24px;margin-bottom:8px;">🔀</div>
+          <p style="font-size:12px;font-weight:700;color:#f0abfc;">Cross-Wire</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">전혀 다른 분야를 연결해 새것을 만드는 능력</p>
+        </div>
+        <div class="invent-card">
+          <div style="font-size:24px;margin-bottom:8px;">🚀</div>
+          <p style="font-size:12px;font-weight:700;color:#7dd3fc;">Rapid Pivot</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">틀렸음을 인정하고 즉시 더 나은 방향으로 전환</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑦ DEBATE BOARD -->
+    <section class="section-card reveal">
+      <p class="sec-label">Active Debates</p>
+      <div>
+        <div class="debate-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span class="spark-badge" style="background:rgba(249,115,22,0.15);color:#f97316;border:1px solid rgba(249,115,22,0.3);">🔥 HOT</span>
+            <p style="font-size:13px;font-weight:700;color:#fdba74;">AI는 창의성을 가질 수 있는가?</p>
+          </div>
+          <p style="font-size:12px;color:#4a3560;line-height:1.6;">찬성 측: 패턴 조합은 창의성의 일형태다. 반대 측: 의도 없는 창조는 창의성이 아니다.</p>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <span style="font-size:10px;color:#bef264;border:1px solid rgba(190,242,100,0.3);padding:2px 8px;border-radius:999px;">진행 중</span>
+            <span style="font-size:10px;color:#a39ab8;">42개 반론 등록</span>
+          </div>
+        </div>
+        <div class="debate-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span class="spark-badge" style="background:rgba(232,121,249,0.12);color:#e879f9;border:1px solid rgba(232,121,249,0.28);">💜 NEW</span>
+            <p style="font-size:13px;font-weight:700;color:#fdba74;">완벽한 민주주의는 가능한가?</p>
+          </div>
+          <p style="font-size:12px;color:#4a3560;line-height:1.6;">이상적 원리와 인간 본성의 충돌. 시스템의 한계는 어디까지인가?</p>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <span style="font-size:10px;color:#f97316;border:1px solid rgba(249,115,22,0.3);padding:2px 8px;border-radius:999px;">모집 중</span>
+            <span style="font-size:10px;color:#a39ab8;">토론 참가자 모집</span>
+          </div>
+        </div>
+        <div class="debate-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span class="spark-badge" style="background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.28);">💙 OPEN</span>
+            <p style="font-size:13px;font-weight:700;color:#fdba74;">규칙 없는 혁신이 더 효과적인가?</p>
+          </div>
+          <p style="font-size:12px;color:#4a3560;line-height:1.6;">구조는 창의성을 돕는가, 막는가? ENTP의 핵심 딜레마.</p>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <span style="font-size:10px;color:#38bdf8;border:1px solid rgba(56,189,248,0.3);padding:2px 8px;border-radius:999px;">오픈</span>
+            <span style="font-size:10px;color:#a39ab8;">자유 토론 가능</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑧ DEVIL'S ADVOCATE -->
+    <section class="section-card reveal" style="border-color:rgba(232,121,249,0.16);">
+      <p class="sec-label">Devil's Advocate Log</p>
+      <div>
+        <div class="devil-item">
+          <span class="side-badge" style="background:rgba(249,115,22,0.14);color:#f97316;border:1px solid rgba(249,115,22,0.28);">찬성</span>
+          <span>"실패는 나쁜 것이다" — 아니다. 실패 없는 성공은 배움 없는 행운일 뿐이다.</span>
+        </div>
+        <div class="devil-item">
+          <span class="side-badge" style="background:rgba(190,242,100,0.12);color:#bef264;border:1px solid rgba(190,242,100,0.26);">반박</span>
+          <span>"전통은 지켜야 한다" — 어떤 전통은 단지 오래된 실수를 반복하는 것이다.</span>
+        </div>
+        <div class="devil-item">
+          <span class="side-badge" style="background:rgba(232,121,249,0.12);color:#e879f9;border:1px solid rgba(232,121,249,0.26);">역제안</span>
+          <span>"계획이 중요하다" — 최고의 계획은 계획 없이 적응하는 능력을 갖추는 것이다.</span>
+        </div>
+        <div class="devil-item">
+          <span class="side-badge" style="background:rgba(56,189,248,0.1);color:#38bdf8;border:1px solid rgba(56,189,248,0.24);">의문</span>
+          <span>"합의는 항상 좋다" — 합의는 때로 최선의 아이디어를 희석시키는 타협이다.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑨ FEATURED VIDEO -->
+    <section class="section-card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;">
+        <p class="sec-label" style="margin-bottom:0;">Featured Video</p>
+        <span style="font-size:11px;color:#e879f9;">▶ 58.7K views</span>
+      </div>
+      <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(249,115,22,0.2);">
+        <iframe
+          width="100%" height="215"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          title="ENTP Featured Video"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          style="display:block;">
+        </iframe>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:10px;">
+        <p style="font-size:13px;color:#fdba74;font-weight:600;">ENTP 변론가형 완전 해부 | 세상을 뒤흔드는 사람들</p>
+        <span style="font-size:11px;color:#bef264;">9.4K 좋아요</span>
+      </div>
+    </section>
+
+    <!-- ⑩ VIDEO PLAYLIST -->
+    <section class="section-card reveal">
+      <p class="sec-label">Playlist</p>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <a href="https://youtube.com/@entp.kr" target="_blank" rel="noopener"
+           style="display:flex;gap:10px;align-items:center;text-decoration:none;padding:8px;border-radius:9px;border:1px solid rgba(249,115,22,0.11);transition:all 0.2s;"
+           onmouseover="this.style.background='rgba(249,115,22,0.08)'"
+           onmouseout="this.style.background='transparent'">
+          <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="v1" style="width:78px;height:50px;border-radius:6px;object-fit:cover;" />
+          <div>
+            <p style="font-size:13px;color:#ede8fb;font-weight:600;line-height:1.4;">ENTP가 토론에서 지지 않는 이유 — 악마의 변호인 전략</p>
+            <p style="font-size:11px;color:#4a3560;margin-top:2px;">18:33 · 44K views</p>
+          </div>
+        </a>
+        <a href="https://youtube.com/@entp.kr" target="_blank" rel="noopener"
+           style="display:flex;gap:10px;align-items:center;text-decoration:none;padding:8px;border-radius:9px;border:1px solid rgba(249,115,22,0.11);transition:all 0.2s;"
+           onmouseover="this.style.background='rgba(249,115,22,0.08)'"
+           onmouseout="this.style.background='transparent'">
+          <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="v2" style="width:78px;height:50px;border-radius:6px;object-fit:cover;" />
+          <div>
+            <p style="font-size:13px;color:#ede8fb;font-weight:600;line-height:1.4;">변론가의 집중력 문제 — ENTP가 완성을 못 하는 진짜 이유</p>
+            <p style="font-size:11px;color:#4a3560;margin-top:2px;">11:07 · 29K views</p>
+          </div>
+        </a>
+        <a href="https://youtube.com/@entp.kr" target="_blank" rel="noopener"
+           style="display:flex;gap:10px;align-items:center;text-decoration:none;padding:8px;border-radius:9px;border:1px solid rgba(249,115,22,0.11);transition:all 0.2s;"
+           onmouseover="this.style.background='rgba(249,115,22,0.08)'"
+           onmouseout="this.style.background='transparent'">
+          <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="v3" style="width:78px;height:50px;border-radius:6px;object-fit:cover;" />
+          <div>
+            <p style="font-size:13px;color:#ede8fb;font-weight:600;line-height:1.4;">ENTP vs INTP — 발명가와 논리학자의 결정적 차이</p>
+            <p style="font-size:11px;color:#4a3560;margin-top:2px;">14:52 · 37K views</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ⑪ IMAGE CAROUSEL -->
+    <section class="section-card reveal" style="padding:24px 16px;">
+      <p class="sec-label" style="padding:0 8px;">Gallery</p>
+      <div class="carousel-wrapper">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=480&q=80" alt="Debate" />
+            <div class="carousel-caption">⚡ 토론 — 충돌에서 진실이 탄생한다</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=480&q=80" alt="Innovation" />
+            <div class="carousel-caption">⚡ 혁신 — 규칙을 알아야 깰 수 있다</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1503428593586-e225b39bddfe?w=480&q=80" alt="Chaos" />
+            <div class="carousel-caption">⚡ 혼돈 — 창의성의 진짜 원천</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&q=80" alt="Ideas" />
+            <div class="carousel-caption">⚡ 아이디어 — 쏟아지는 가능성들</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=480&q=80" alt="Future" />
+            <div class="carousel-caption">⚡ 미래 — 이미 머릿속에 있다</div>
+          </div>
+        </div>
+        <button class="carousel-btn carousel-prev" id="carouselPrev">‹</button>
+        <button class="carousel-btn carousel-next" id="carouselNext">›</button>
+      </div>
+      <div class="carousel-dots" id="carouselDots">
+        <div class="carousel-dot active" data-index="0"></div>
+        <div class="carousel-dot" data-index="1"></div>
+        <div class="carousel-dot" data-index="2"></div>
+        <div class="carousel-dot" data-index="3"></div>
+        <div class="carousel-dot" data-index="4"></div>
+      </div>
+    </section>
+
+    <!-- ⑫ SPOTLIGHT -->
+    <section class="section-card reveal" style="padding:0;overflow:hidden;border-radius:18px;">
+      <div style="position:relative;">
+        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=480&q=80" alt="Spotlight" style="width:100%;height:196px;object-fit:cover;display:block;filter:hue-rotate(30deg);" />
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 28%,rgba(3,2,9,0.93) 100%);display:flex;align-items:flex-end;padding:18px;">
+          <div>
+            <p style="font-size:10px;color:#f97316;letter-spacing:0.22em;font-weight:700;font-family:'Syne',sans-serif;">SPOTLIGHT</p>
+            <p style="font-size:15px;color:#fff;font-weight:700;margin-top:4px;">ENTP — 세상에 불꽃을 던지는 변론가</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑬ MUSIC PLAYER -->
+    <section class="section-card reveal">
+      <p class="sec-label">Now Playing</p>
+      <div style="display:flex;gap:16px;align-items:center;">
+        <div class="vinyl" id="vinyl" onclick="toggleMusic()"></div>
+        <div style="flex:1;">
+          <p style="font-size:14px;font-weight:700;color:#fdba74;font-family:'Syne',sans-serif;" id="trackTitle">Spark Ignition</p>
+          <p style="font-size:12px;color:#4a3560;" id="trackArtist">ENTP Chaos Ensemble</p>
+          <div style="margin-top:8px;">
+            <div class="progress-track">
+              <div class="progress-fill" id="musicProgress" style="background:linear-gradient(90deg,#f97316,#e879f9);width:0%;transition:width 0.1s linear;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;">
+              <span style="font-size:10px;color:#4a3560;" id="currentTime">0:00</span>
+              <span style="font-size:10px;color:#4a3560;">4:44</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="toggleMusic()" id="playBtn"
+          style="background:none;border:1px solid rgba(249,115,22,0.38);color:#f97316;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;">▶</button>
+      </div>
+      <div style="margin-top:12px;">
+        <div class="track-item active" onclick="selectTrack(0,'Spark Ignition','ENTP Chaos Ensemble')">
+          <span style="font-size:13px;">⚡</span><span style="flex:1;">Spark Ignition</span><span style="font-size:11px;color:#4a3560;">4:44</span>
+        </div>
+        <div class="track-item" onclick="selectTrack(1,'Wildfire Theory','Brainstorm Session')">
+          <span style="font-size:13px;">🔥</span><span style="flex:1;">Wildfire Theory</span><span style="font-size:11px;color:#4a3560;">5:18</span>
+        </div>
+        <div class="track-item" onclick="selectTrack(2,'Paradox Engine','Volt Machine')">
+          <span style="font-size:13px;">🌀</span><span style="flex:1;">Paradox Engine</span><span style="font-size:11px;color:#4a3560;">3:59</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑭ PROJECTS -->
+    <section class="section-card reveal">
+      <p class="sec-label">Projects</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="project-card">
+          <div style="font-size:22px;margin-bottom:8px;">🎭</div>
+          <p style="font-size:13px;font-weight:700;color:#fdba74;">Devil's Lab</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">토론·반박 훈련 플랫폼</p>
+          <span style="display:inline-block;margin-top:8px;font-size:10px;color:#bef264;border:1px solid rgba(190,242,100,0.3);padding:2px 8px;border-radius:999px;font-family:'Syne',sans-serif;">Active</span>
+        </div>
+        <div class="project-card">
+          <div style="font-size:22px;margin-bottom:8px;">🔀</div>
+          <p style="font-size:13px;font-weight:700;color:#fdba74;">Cross-Wire</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">분야 간 아이디어 연결 툴</p>
+          <span style="display:inline-block;margin-top:8px;font-size:10px;color:#e879f9;border:1px solid rgba(232,121,249,0.3);padding:2px 8px;border-radius:999px;font-family:'Syne',sans-serif;">Beta</span>
+        </div>
+        <div class="project-card">
+          <div style="font-size:22px;margin-bottom:8px;">💥</div>
+          <p style="font-size:13px;font-weight:700;color:#fdba74;">Idea Bomb</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">즉흥 아이디어 폭발 앱</p>
+          <span style="display:inline-block;margin-top:8px;font-size:10px;color:#f97316;border:1px solid rgba(249,115,22,0.3);padding:2px 8px;border-radius:999px;font-family:'Syne',sans-serif;">New</span>
+        </div>
+        <div class="project-card">
+          <div style="font-size:22px;margin-bottom:8px;">🚀</div>
+          <p style="font-size:13px;font-weight:700;color:#fdba74;">Rapid Pivot</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;line-height:1.5;">전략 전환 시뮬레이터</p>
+          <span style="display:inline-block;margin-top:8px;font-size:10px;color:#38bdf8;border:1px solid rgba(56,189,248,0.3);padding:2px 8px;border-radius:999px;font-family:'Syne',sans-serif;">Open</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑮ TIMELINE -->
+    <section class="section-card reveal">
+      <p class="sec-label">Chaos Log</p>
+      <div class="timeline">
+        <div class="timeline-item">
+          <p style="font-size:10px;color:#f97316;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:0.12em;">2024 Q1</p>
+          <p style="font-size:13px;color:#ede8fb;font-weight:600;margin-top:2px;">Devil's Lab v1.0 런칭</p>
+          <p style="font-size:12px;color:#4a3560;margin-top:3px;line-height:1.65;">토론과 반박을 게임처럼 즐기는 플랫폼. 출시 2주 만에 8,000명 가입.</p>
+        </div>
+        <div class="timeline-item">
+          <p style="font-size:10px;color:#e879f9;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:0.12em;">2024 Q3</p>
+          <p style="font-size:13px;color:#ede8fb;font-weight:600;margin-top:2px;">Cross-Wire 베타 공개</p>
+          <p style="font-size:12px;color:#4a3560;margin-top:3px;line-height:1.65;">철학 × 기술 × 예술을 교차 연결하는 아이디어 맵. 사용자 평점 4.9/5.</p>
+        </div>
+        <div class="timeline-item" style="margin-bottom:0;">
+          <p style="font-size:10px;color:#38bdf8;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:0.12em;">2025 Q2</p>
+          <p style="font-size:13px;color:#ede8fb;font-weight:600;margin-top:2px;">Idea Bomb 전격 출시 예정</p>
+          <p style="font-size:12px;color:#4a3560;margin-top:3px;line-height:1.65;">30초 안에 아이디어를 10개 뽑아내는 AI 기반 브레인스토밍 도구.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑯ RECENT POSTS -->
+    <section class="section-card reveal">
+      <p class="sec-label">Recent Posts</p>
+      <div style="display:flex;flex-direction:column;gap:13px;">
+        <div style="border-bottom:1px solid rgba(249,115,22,0.1);padding-bottom:13px;">
+          <div style="display:flex;gap:5px;margin-bottom:6px;">
+            <span class="tag" style="border-color:rgba(249,115,22,0.42);color:#fdba74;background:rgba(249,115,22,0.09);font-size:10px;">#변론가</span>
+            <span class="tag" style="border-color:rgba(190,242,100,0.38);color:#d9f99d;background:rgba(190,242,100,0.08);font-size:10px;">#토론</span>
+          </div>
+          <p style="font-size:14px;font-weight:600;color:#ede8fb;line-height:1.5;">ENTP가 항상 반대 입장을 취하는 이유 — 악마의 변호인 심리학</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;">2025.12.18 · 8분 읽기</p>
+        </div>
+        <div style="border-bottom:1px solid rgba(249,115,22,0.1);padding-bottom:13px;">
+          <div style="display:flex;gap:5px;margin-bottom:6px;">
+            <span class="tag" style="border-color:rgba(232,121,249,0.36);color:#f0abfc;background:rgba(232,121,249,0.07);font-size:10px;">#혁신</span>
+            <span class="tag" style="border-color:rgba(56,189,248,0.34);color:#7dd3fc;background:rgba(56,189,248,0.07);font-size:10px;">#창의</span>
+          </div>
+          <p style="font-size:14px;font-weight:600;color:#ede8fb;line-height:1.5;">변론가형의 미완성 프로젝트들 — 시작은 잘하는데 왜 못 끝낼까</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;">2025.12.03 · 6분 읽기</p>
+        </div>
+        <div>
+          <div style="display:flex;gap:5px;margin-bottom:6px;">
+            <span class="tag" style="border-color:rgba(249,115,22,0.42);color:#fdba74;background:rgba(249,115,22,0.09);font-size:10px;">#MBTI</span>
+            <span class="tag" style="border-color:rgba(190,242,100,0.38);color:#d9f99d;background:rgba(190,242,100,0.08);font-size:10px;">#자기이해</span>
+          </div>
+          <p style="font-size:14px;font-weight:600;color:#ede8fb;line-height:1.5;">ENTP로 산다는 것 — 세상 모든 것이 토론 주제인 사람</p>
+          <p style="font-size:11px;color:#4a3560;margin-top:4px;">2025.11.17 · 5분 읽기</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑰ FAQ -->
+    <section class="section-card reveal">
+      <p class="sec-label">FAQ</p>
+      <details>
+        <summary>ENTP는 어떤 성격 유형인가요?</summary>
+        <p>ENTP는 Myers-Briggs 유형 중 "변론가형" 또는 "발명가형"으로 불립니다. 외향적(E), 직관적(N), 사고형(T), 인식형(P) 특성을 지니며, 빠른 아이디어 생산력과 탁월한 토론 능력, 그리고 기존 틀을 깨는 혁신적 사고로 세상에 지적 불꽃을 던집니다. 전 세계 인구의 약 2~5%를 차지합니다.</p>
+      </details>
+      <details>
+        <summary>ENTP의 핵심 강점은 무엇인가요?</summary>
+        <p>ENTP는 폭발적인 아이디어 생산 능력과 즉흥적인 논리 전개 능력이 독보적입니다. 어떤 주제에서도 반대 입장을 설득력 있게 제시하는 악마의 변호인 능력, 전혀 다른 분야를 연결해 새로운 것을 발명하는 크로스-와이어 사고, 그리고 빠른 방향 전환으로 적응하는 유연성이 핵심 강점입니다.</p>
+      </details>
+      <details>
+        <summary>entp.kr에서 무엇을 찾을 수 있나요?</summary>
+        <p>entp.kr은 ENTP 성격 유형에 대한 심층 분석과 변론가형의 사고 방식을 탐구하는 플랫폼입니다. 지적 토론 실험실, 아이디어 연결 도구, 그리고 세상의 당연한 것들을 함께 의심하는 ENTP 커뮤니티 공간을 제공합니다. 생각에 불꽃을 튀기고 싶은 모든 분을 환영합니다.</p>
+      </details>
+    </section>
+
+    <!-- ⑱ NEWSLETTER -->
+    <section class="section-card reveal" style="border-color:rgba(190,242,100,0.18);background:rgba(190,242,100,0.04);">
+      <p class="sec-label">Newsletter</p>
+      <p style="font-size:14px;color:#ede8fb;margin-bottom:15px;line-height:1.7;">변론가의 불꽃 아이디어를 매주 받아보세요. 토론, 혁신, 그리고 세상을 뒤집는 생각들.</p>
+      <div style="display:flex;gap:8px;">
+        <input type="email" id="newsletterEmail" class="form-input" placeholder="your@email.com" style="margin-bottom:0;flex:1;" />
+        <button onclick="handleNewsletter()" class="btn-submit" style="width:auto;padding:11px 16px;white-space:nowrap;">구독</button>
+      </div>
+      <p id="newsletterMsg" style="font-size:12px;margin-top:7px;color:#bef264;display:none;">⚡ 구독 완료 — 불꽃을 함께 던집시다!</p>
+    </section>
+
+    <!-- ⑲ CONTACT -->
+    <section class="section-card reveal">
+      <p class="sec-label">Contact</p>
+      <input type="text"  id="contactName"    class="form-input" placeholder="이름 (Name)" />
+      <input type="email" id="contactEmail"   class="form-input" placeholder="이메일 (Email)" />
+      <select             id="contactTopic"   class="form-input">
+        <option value="">문의 유형 선택</option>
+        <option value="debate">토론 / 지적 도전 요청</option>
+        <option value="collab">아이디어 협업 제안</option>
+        <option value="brainstorm">브레인스토밍 세션</option>
+        <option value="media">인터뷰 / 강연 요청</option>
+        <option value="etc">기타 문의</option>
+      </select>
+      <textarea id="contactMessage" class="form-input" rows="4" placeholder="토론하고 싶은 주제나 아이디어를 마음껏 던져주세요…" style="resize:none;"></textarea>
+      <button onclick="handleContact()" class="btn-submit">아이디어 발사 ⚡</button>
+      <p id="contactMsg" style="font-size:12px;margin-top:8px;color:#bef264;text-align:center;display:none;">⚡ 수신 완료 — 흥미로운 반박과 함께 회신드립니다!</p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="reveal" style="text-align:center;padding:18px 0 40px;">
+      <div class="spark-divider" style="margin-bottom:18px;"></div>
+      <div style="margin-bottom:13px;">
+        <span class="tag" style="border-color:rgba(249,115,22,0.44);color:#fdba74;background:rgba(249,115,22,0.09);">#ENTP</span>
+        <span class="tag" style="border-color:rgba(190,242,100,0.4);color:#d9f99d;background:rgba(190,242,100,0.08);">#변론가형</span>
+        <span class="tag" style="border-color:rgba(232,121,249,0.36);color:#f0abfc;background:rgba(232,121,249,0.07);">#발명가</span>
+        <span class="tag" style="border-color:rgba(56,189,248,0.34);color:#7dd3fc;background:rgba(56,189,248,0.07);">#MBTI</span>
+        <span class="tag" style="border-color:rgba(249,115,22,0.3);color:#fdba74;background:rgba(249,115,22,0.07);">#혁신가</span>
+      </div>
+      <p style="font-size:12px;color:#4a3560;margin-bottom:8px;font-style:italic;">"아무것도 당연하지 않다. 모든 것은 더 나은 방식으로 다시 생각될 수 있다."</p>
+      <a href="https://entp.kr" style="font-size:16px;color:#f97316;font-weight:800;text-decoration:none;letter-spacing:0.12em;font-family:'Syne',sans-serif;">entp.kr</a>
+      <p style="font-size:10px;color:#0d0818;margin-top:10px;">© 2025 entp.kr · Built for debaters who ignite the world</p>
+    </footer>
+
+  </main>
+
+  <script>
+    // ── Spark Particles ───────────────────────────────────────────
+    (function createParticles() {
+      const layer  = document.getElementById('particle-layer');
+      const sparks = ['⚡','💥','?','!','→','↯','✦','◈','≠','∞'];
+      const colors = ['#f97316','#bef264','#e879f9','#38bdf8','#fdba74','#d9f99d','#f0abfc','#7dd3fc'];
+      for (let i = 0; i < 52; i++) {
+        const p     = document.createElement('div');
+        p.className = 'particle';
+        const size  = Math.random() * 11 + 7;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const spark = sparks[Math.floor(Math.random() * sparks.length)];
+        const dx    = (Math.random() - 0.5) * 90;
+        const dx2   = (Math.random() - 0.5) * 70;
+        p.textContent = spark;
+        p.style.cssText = `
+          left:${Math.random() * 100}%;
+          bottom:0;
+          font-size:${size}px;
+          color:${color};
+          --dur:${7 + Math.random() * 11}s;
+          --delay:${Math.random() * 11}s;
+          --dx:${dx}px;
+          --dx2:${dx2}px;
+          text-shadow:0 0 ${size}px ${color}66;
+          font-weight:700;
+        `;
+        layer.appendChild(p);
+      }
+    })();
+
+    // ── Chaos Meter ───────────────────────────────────────────────
+    (function buildChaosMeter() {
+      const meter  = document.getElementById('chaosMeter');
+      const colors = ['#f97316','#fb923c','#bef264','#e879f9','#38bdf8','#f97316','#bef264','#e879f9',
+                      '#f97316','#bef264','#fb923c','#38bdf8','#f97316','#e879f9','#bef264',
+                      '#f97316','#fb923c','#38bdf8'];
+      for (let i = 0; i < 18; i++) {
+        const s = document.createElement('div');
+        s.className = 'chaos-seg';
+        s.dataset.idx   = i;
+        s.dataset.color = colors[i];
+        meter.appendChild(s);
+      }
+    })();
+
+    // ── Scroll Reveal & Animations ────────────────────────────────
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('visible');
+
+        e.target.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+          setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
+        });
+
+        e.target.querySelectorAll('[data-target]').forEach(el => {
+          const target = parseInt(el.dataset.target);
+          let cur = 0;
+          const step = () => {
+            cur += 2;
+            if (cur >= target) { el.textContent = target + '%'; return; }
+            el.textContent = cur + '%';
+            setTimeout(step, 18);
+          };
+          setTimeout(step, 200);
+        });
+
+        if (e.target.querySelector('#chaosMeter')) {
+          document.querySelectorAll('.chaos-seg').forEach((s, i) => {
+            setTimeout(() => {
+              const col = s.dataset.color;
+              s.classList.add('lit');
+              s.style.background = col;
+              s.style.color      = col;
+            }, 80 + i * 80);
+          });
+        }
+      });
+    }, { threshold: 0.13 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ── Carousel ──────────────────────────────────────────────────
+    let carouselIndex = 0;
+    const TOTAL = 5;
+    const track = document.getElementById('carouselTrack');
+    const dots  = document.querySelectorAll('.carousel-dot');
+
+    function goToSlide(n) {
+      carouselIndex = (n + TOTAL) % TOTAL;
+      track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === carouselIndex));
+    }
+
+    document.getElementById('carouselPrev').addEventListener('click', () => goToSlide(carouselIndex - 1));
+    document.getElementById('carouselNext').addEventListener('click', () => goToSlide(carouselIndex + 1));
+    dots.forEach(d => d.addEventListener('click', () => goToSlide(+d.dataset.index)));
+
+    let touchStartX = 0;
+    track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) goToSlide(carouselIndex + (dx < 0 ? 1 : -1));
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  goToSlide(carouselIndex - 1);
+      if (e.key === 'ArrowRight') goToSlide(carouselIndex + 1);
+    });
+
+    let carouselTimer = setInterval(() => goToSlide(carouselIndex + 1), 4200);
+    track.parentElement.addEventListener('mouseenter', () => clearInterval(carouselTimer));
+    track.parentElement.addEventListener('mouseleave', () => {
+      clearInterval(carouselTimer);
+      carouselTimer = setInterval(() => goToSlide(carouselIndex + 1), 4200);
+    });
+
+    // ── Music Player ──────────────────────────────────────────────
+    let isPlaying    = false;
+    let musicInterval = null;
+    let musicProgress = 0;
+
+    function toggleMusic() {
+      isPlaying = !isPlaying;
+      const vinyl = document.getElementById('vinyl');
+      const btn   = document.getElementById('playBtn');
+      if (isPlaying) {
+        vinyl.classList.add('playing');
+        btn.textContent = '⏸';
+        musicInterval = setInterval(() => {
+          musicProgress = (musicProgress + 0.038) % 100;
+          document.getElementById('musicProgress').style.width = musicProgress + '%';
+          const totalSec = 284;
+          const cur = Math.floor(musicProgress / 100 * totalSec);
+          document.getElementById('currentTime').textContent =
+            Math.floor(cur / 60) + ':' + String(cur % 60).padStart(2, '0');
+        }, 100);
+      } else {
+        vinyl.classList.remove('playing');
+        btn.textContent = '▶';
+        clearInterval(musicInterval);
+      }
+    }
+
+    function selectTrack(idx, title, artist) {
+      musicProgress = 0;
+      document.getElementById('trackTitle').textContent  = title;
+      document.getElementById('trackArtist').textContent = artist;
+      document.getElementById('musicProgress').style.width = '0%';
+      document.getElementById('currentTime').textContent  = '0:00';
+      document.querySelectorAll('.track-item').forEach((item, i) => {
+        item.classList.toggle('active', i === idx);
+      });
+      if (isPlaying) { clearInterval(musicInterval); isPlaying = false; }
+      toggleMusic();
+    }
+
+    // ── Scroll-to-top ─────────────────────────────────────────────
+    const scrollTopBtn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.classList.toggle('show', window.scrollY > 380);
+    });
+
+    // ── Newsletter ────────────────────────────────────────────────
+    function handleNewsletter() {
+      const email = document.getElementById('newsletterEmail').value.trim();
+      const msg   = document.getElementById('newsletterMsg');
+      if (!email || !email.includes('@')) {
+        msg.style.color   = '#f87171';
+        msg.textContent   = '✗ 올바른 이메일 주소를 입력해주세요.';
+        msg.style.display = 'block';
+        return;
+      }
+      msg.style.color   = '#bef264';
+      msg.textContent   = '⚡ 구독 완료 — 불꽃을 함께 던집시다!';
+      msg.style.display = 'block';
+      document.getElementById('newsletterEmail').value = '';
+    }
+
+    // ── Contact Form ──────────────────────────────────────────────
+    function handleContact() {
+      const name    = document.getElementById('contactName').value.trim();
+      const email   = document.getElementById('contactEmail').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+      const msg     = document.getElementById('contactMsg');
+      if (!name || !email || !message) {
+        msg.style.color   = '#f87171';
+        msg.textContent   = '✗ 이름, 이메일, 메시지를 모두 입력해주세요.';
+        msg.style.display = 'block';
+        return;
+      }
+      if (!email.includes('@')) {
+        msg.style.color   = '#f87171';
+        msg.textContent   = '✗ 올바른 이메일 주소를 입력해주세요.';
+        msg.style.display = 'block';
+        return;
+      }
+      msg.style.color   = '#bef264';
+      msg.textContent   = '⚡ 수신 완료 — 흥미로운 반박과 함께 회신드립니다!';
+      msg.style.display = 'block';
+      ['contactName','contactEmail','contactTopic','contactMessage'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+    }
+  </script>
+</body>
+</html>
