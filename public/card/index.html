@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>entp.kr</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#08050e}
+
+/* background orbs */
+.bg-orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0}
+.bg-orb-1{width:680px;height:480px;top:-220px;left:-160px;background:radial-gradient(ellipse,rgba(140,50,230,0.18)0%,transparent 70%)}
+.bg-orb-2{width:540px;height:540px;bottom:-200px;right:-140px;background:radial-gradient(ellipse,rgba(180,80,255,0.15)0%,transparent 70%)}
+.bg-orb-3{width:420px;height:310px;top:36%;left:54%;background:radial-gradient(ellipse,rgba(100,40,200,0.10)0%,transparent 70%)}
+.bg-orb-4{width:330px;height:250px;bottom:10%;left:7%;background:radial-gradient(ellipse,rgba(160,70,240,0.08)0%,transparent 70%)}
+.bg-orb-5{width:270px;height:200px;top:16%;right:11%;background:radial-gradient(ellipse,rgba(200,100,255,0.07)0%,transparent 70%)}
+.bg-orb-6{width:210px;height:170px;bottom:26%;right:26%;background:radial-gradient(ellipse,rgba(120,50,210,0.05)0%,transparent 70%)}
+
+/* idea spark field */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(circle,rgba(180,80,255,0.055) 1px,transparent 1px) 0 0/52px 52px,
+    radial-gradient(circle,rgba(140,50,220,0.038) 1px,transparent 1px) 26px 26px/68px 68px,
+    radial-gradient(circle,rgba(200,110,255,0.028) 1px,transparent 1px) 14px 14px/88px 88px}
+
+/* scene */
+.scene{perspective:900px;position:relative;z-index:1}
+
+/* card wrap */
+.card-wrap{
+  width:380px;height:240px;position:relative;
+  transform-style:preserve-3d;border-radius:16px;cursor:pointer;
+  animation:card-enter 1.0s cubic-bezier(.18,1.5,.36,1) both
+}
+@keyframes card-enter{
+  from{opacity:0;transform:rotateX(-6deg) rotateY(32deg) scale(.78) translateX(22px);filter:blur(12px) brightness(2.2)}
+  to{opacity:1;transform:none;filter:none}
+}
+.card-wrap.is-idle{animation:card-enter 1.0s cubic-bezier(.18,1.5,.36,1) both,float-idle 7s ease-in-out 1.0s infinite}
+@keyframes float-idle{
+  0%,100%{transform:rotateX(3deg) rotateY(-4.5deg) translateY(0)}
+  20%{transform:rotateX(-4deg) rotateY(6deg) translateY(-10px)}
+  50%{transform:rotateX(3.5deg) rotateY(-3.5deg) translateY(-7px)}
+  75%{transform:rotateX(-2.5deg) rotateY(5deg) translateY(-9px)}
+}
+
+/* holographic overlay */
+.card-holo{
+  position:absolute;inset:0;border-radius:16px;z-index:8;pointer-events:none;opacity:0;
+  background:conic-gradient(from var(--r,0deg) at var(--mx,50%) var(--my,50%),
+    rgba(180,80,255,0.22) 0deg,rgba(100,40,200,0.12) 60deg,
+    rgba(220,160,255,0.20) 120deg,rgba(80,20,180,0.10) 180deg,
+    rgba(180,80,255,0.18) 240deg,rgba(140,60,220,0.14) 300deg,
+    rgba(180,80,255,0.22) 360deg);
+  mix-blend-mode:screen;transition:opacity .3s
+}
+.card-wrap:hover .card-holo{opacity:1}
+
+/* spotlight */
+.card-spot{
+  position:absolute;inset:0;border-radius:16px;z-index:7;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse 160px 110px at var(--mx,50%) var(--my,50%),rgba(200,120,255,0.18) 0%,transparent 70%);
+  transition:opacity .3s
+}
+.card-wrap:hover .card-spot{opacity:1}
+
+/* shimmer */
+.card-shimmer{
+  position:absolute;inset:0;border-radius:16px;z-index:6;pointer-events:none;overflow:hidden
+}
+.card-shimmer::before,.card-shimmer::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(108deg,transparent 26%,rgba(200,120,255,0.18) 50%,transparent 74%);
+  animation:debate-sweep 5.0s ease-in-out infinite
+}
+.card-shimmer::after{animation-delay:2.5s;background:linear-gradient(108deg,transparent 26%,rgba(160,70,240,0.12) 50%,transparent 74%)}
+@keyframes debate-sweep{
+  0%{transform:translateX(-130%) skewX(-15deg)}
+  55%,100%{transform:translateX(230%) skewX(-15deg)}
+}
+
+/* card texture */
+.card-texture{
+  position:absolute;inset:0;border-radius:16px;z-index:5;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Ccircle cx='28' cy='28' r='.8' fill='rgba(180,80,255,0.07)'/%3E%3C/svg%3E") repeat;
+  opacity:.75
+}
+
+/* card edge */
+.card-edge{
+  position:absolute;inset:0;border-radius:16px;z-index:9;pointer-events:none;
+  box-shadow:inset 0 1px 0 rgba(220,150,255,0.52),inset 0 -1px 0 rgba(80,20,160,0.28),inset 1px 0 0 rgba(200,110,255,0.24),inset -1px 0 0 rgba(80,20,160,0.22)
+}
+
+/* main card */
+.card{
+  width:100%;height:100%;border-radius:16px;overflow:hidden;position:relative;
+  background:linear-gradient(130deg,rgba(140,50,220,0.22) 0%,rgba(80,20,160,0.11) 28%,rgba(180,80,255,0.18) 58%,rgba(100,30,190,0.13) 100%);
+  backdrop-filter:blur(24px) saturate(180%) brightness(1.10);
+  border:1px solid rgba(180,80,255,0.30);
+  box-shadow:0 38px 82px rgba(4,2,10,.76),0 10px 26px rgba(4,2,10,.56),inset 0 1px 0 rgba(220,150,255,0.48),inset 0 2px 8px rgba(160,70,240,0.12)
+}
+
+/* card inner art */
+.card-inner-art{position:absolute;inset:0;z-index:1;pointer-events:none}
+
+/* spark container */
+#sparkContainer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;border-radius:16px}
+.spark{position:absolute;border-radius:50%;animation:spark-burst linear infinite;opacity:0}
+@keyframes spark-burst{
+  0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0deg)}
+  10%{opacity:.95}
+  80%{opacity:.55}
+  100%{opacity:0;transform:translate(var(--sx,8px),var(--sy,-65px)) scale(1.2) rotate(var(--sr,90deg))}
+}
+
+/* letter tag */
+.letter-tag{
+  position:absolute;top:14px;left:16px;z-index:10;display:flex;gap:4px
+}
+.letter-tag .lt{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,160,255,0.92);text-shadow:0 0 8px rgba(180,80,255,0.65);line-height:1}
+.letter-tag .lt-word{font-size:6.5px;font-weight:500;letter-spacing:.04em;color:rgba(200,130,255,0.55);margin-top:2px;text-transform:uppercase}
+.letter-tag .lt-col{display:flex;flex-direction:column;align-items:center;gap:1px}
+
+/* hover meaning overlay */
+.card-meanings{
+  position:absolute;inset:0;z-index:11;display:flex;align-items:center;justify-content:center;
+  gap:22px;opacity:0;pointer-events:none;transition:opacity .35s;
+  background:rgba(8,5,14,.55);backdrop-filter:blur(4px) saturate(140%);border-radius:16px
+}
+.card-wrap:hover .card-meanings{opacity:1}
+.meaning-item{display:flex;flex-direction:column;align-items:center;gap:5px}
+.meaning-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(140,50,220,0.22);border:1px solid rgba(180,80,255,0.35)}
+.meaning-label{font-size:6.8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(210,150,255,0.80)}
+
+/* divider lines */
+.card-vline{position:absolute;top:18px;bottom:18px;left:50%;width:1px;background:linear-gradient(to bottom,transparent,rgba(180,80,255,0.20) 30%,rgba(180,80,255,0.20) 70%,transparent);z-index:2;pointer-events:none}
+.card-hline{position:absolute;left:18px;right:18px;top:50%;height:1px;background:linear-gradient(to right,transparent,rgba(180,80,255,0.14) 30%,rgba(180,80,255,0.14) 70%,transparent);z-index:2;pointer-events:none}
+
+/* card content */
+.card-content{position:absolute;inset:0;z-index:10;display:flex;align-items:flex-end;padding:14px 18px;pointer-events:none}
+.card-name{flex:1}
+.name-main{font-size:22px;font-weight:900;letter-spacing:-.02em;color:rgba(230,180,255,0.96);line-height:1;text-shadow:0 0 18px rgba(180,80,255,0.55)}
+.name-dot{color:rgba(180,80,255,0.82)}
+.name-sub{font-size:8px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:rgba(200,140,255,0.55);margin-top:3px}
+.card-meta{position:absolute;top:18px;right:18px;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.meta-row{font-size:6.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(200,140,255,0.50)}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-left:10px}
+.badge{display:flex;align-items:center;gap:4px;background:rgba(130,45,210,0.24);border:1px solid rgba(180,80,255,0.36);border-radius:6px;padding:3px 8px}
+.badge-glyph{font-size:11px}
+.badge-label{font-size:9px;font-weight:800;letter-spacing:.10em;color:rgba(230,180,255,0.92)}
+.domain-url{font-size:8.5px;font-weight:700;letter-spacing:.06em;color:rgba(200,140,255,0.55)}
+.domain-tld{color:rgba(180,80,255,0.76)}
+
+/* SVG keyframe animations */
+@keyframes idea-pop{0%{r:0;opacity:0}70%{r:10;opacity:1}100%{r:9;opacity:.90}}
+@keyframes bulb-glow{0%,100%{opacity:.65;filter:drop-shadow(0 0 4px rgba(220,160,255,0.50))}50%{opacity:1;filter:drop-shadow(0 0 12px rgba(200,100,255,0.80))}}
+@keyframes arc-draw{0%{stroke-dashoffset:300}100%{stroke-dashoffset:0}}
+@keyframes node-pop{0%{opacity:0;transform:scale(0)}100%{opacity:1;transform:scale(1)}}
+@keyframes debate-flash{0%,100%{opacity:.35}40%{opacity:.90}70%{opacity:.55}}
+@keyframes idea-appear{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes lightning-draw{0%{stroke-dashoffset:80}100%{stroke-dashoffset:0}}
+@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes counter-spin{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+@keyframes ping-ring{0%{r:14;opacity:.80}100%{r:28;opacity:0}}
+</style>
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+<div class="bg-orb bg-orb-4"></div>
+<div class="bg-orb bg-orb-5"></div>
+<div class="bg-orb bg-orb-6"></div>
+
+<div class="scene">
+  <div class="card-wrap is-idle" id="cardWrap">
+    <div class="card-holo" id="cardHolo"></div>
+    <div class="card-spot" id="cardSpot"></div>
+    <div class="card-shimmer"></div>
+    <div class="card-texture"></div>
+    <div class="card-edge"></div>
+
+    <div class="card" id="cardFace">
+      <!-- SVG Art Layer -->
+      <div class="card-inner-art">
+        <svg width="380" height="240" viewBox="0 0 380 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="rg-bulb" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(230,180,255,0.95)"/>
+              <stop offset="100%" stop-color="rgba(160,70,240,0.55)"/>
+            </radialGradient>
+            <radialGradient id="rg-purple-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(180,80,255,0.30)"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <radialGradient id="rg-bg-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(140,50,220,0.22)"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <filter id="f-purple-glow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur stdDeviation="6" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="f-bulb-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="11" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="f-soft" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <clipPath id="card-clip"><rect width="380" height="240" rx="16"/></clipPath>
+          </defs>
+
+          <g clip-path="url(#card-clip)">
+            <!-- ambient background glow -->
+            <ellipse cx="120" cy="95" rx="165" ry="115" fill="url(#rg-bg-glow)" opacity=".50"/>
+            <ellipse cx="300" cy="165" rx="130" ry="90" fill="url(#rg-purple-glow)" opacity=".38"/>
+
+            <!-- ── IDEA LIGHTBULB (center-left) ── -->
+            <g transform="translate(112,105)" style="animation:bulb-glow 2.6s ease-in-out 1.8s infinite">
+              <!-- outer glow ring -->
+              <circle cx="0" cy="0" r="36" fill="url(#rg-purple-glow)" opacity=".25"/>
+              <!-- ping rings -->
+              <circle cx="0" cy="0" r="14" stroke="rgba(200,110,255,0.45)" stroke-width=".8" fill="none"
+                style="animation:ping-ring 2.8s ease-out 2.2s infinite"/>
+              <circle cx="0" cy="0" r="14" stroke="rgba(180,80,255,0.30)" stroke-width=".6" fill="none"
+                style="animation:ping-ring 2.8s ease-out 3.4s infinite"/>
+              <!-- bulb body -->
+              <path d="M -11,-18 C -11,-28 11,-28 11,-18 C 11,-10 16,-4 16,4 C 16,10 10,14 0,14 C -10,14 -16,10 -16,4 C -16,-4 -11,-10 -11,-18 Z"
+                fill="url(#rg-bulb)" filter="url(#f-bulb-glow)" opacity=".88"/>
+              <!-- bulb base lines -->
+              <line x1="-8" y1="14" x2="-8" y2="20" stroke="rgba(200,150,255,0.60)" stroke-width="1.5"/>
+              <line x1="8"  y1="14" x2="8"  y2="20" stroke="rgba(200,150,255,0.60)" stroke-width="1.5"/>
+              <line x1="-9" y1="17" x2="9"  y2="17" stroke="rgba(200,150,255,0.55)" stroke-width="1.2"/>
+              <line x1="-8" y1="20" x2="8"  y2="20" stroke="rgba(200,150,255,0.50)" stroke-width="1.2"/>
+              <!-- filament inside bulb -->
+              <path d="M -4,-4 Q 0,-10 4,-4 Q 8,2 4,8 Q 0,12 -4,8 Q -8,2 -4,-4"
+                stroke="rgba(255,230,255,0.80)" stroke-width="1" fill="none"/>
+              <!-- shine spot -->
+              <ellipse cx="-5" cy="-12" rx="3" ry="5" fill="rgba(255,255,255,0.35)" transform="rotate(-20,-5,-12)"/>
+            </g>
+
+            <!-- ── IDEA BURST NODES (radiating ideas) ── -->
+            <g style="animation:idea-appear 1.0s ease-out 2.0s both">
+              <!-- idea rays -->
+              <line x1="112" y1="105" x2="60"  y2="65"
+                stroke="rgba(180,80,255,0.32)" stroke-width=".9"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw .8s ease-out 2.4s both"/>
+              <line x1="112" y1="105" x2="58"  y2="118"
+                stroke="rgba(160,60,240,0.28)" stroke-width=".9"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw .8s ease-out 2.6s both"/>
+              <line x1="112" y1="105" x2="80"  y2="155"
+                stroke="rgba(180,80,255,0.28)" stroke-width=".9"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw .8s ease-out 2.8s both"/>
+              <line x1="112" y1="105" x2="155" y2="62"
+                stroke="rgba(200,100,255,0.30)" stroke-width=".9"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw .8s ease-out 2.5s both"/>
+              <line x1="112" y1="105" x2="160" y2="148"
+                stroke="rgba(160,60,240,0.26)" stroke-width=".9"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw .8s ease-out 2.7s both"/>
+
+              <!-- idea nodes with labels -->
+              <g transform="translate(55,60)" style="animation:node-pop .5s ease-out 2.8s both;transform-origin:0px 0px">
+                <circle cx="0" cy="0" r="9" fill="rgba(140,50,220,0.28)" stroke="rgba(180,80,255,0.40)" stroke-width=".8"/>
+                <text x="0" y="3.5" font-family="Inter,sans-serif" font-size="5.5" font-weight="800"
+                  fill="rgba(220,160,255,0.90)" text-anchor="middle" letter-spacing=".02em">WHY</text>
+              </g>
+              <g transform="translate(53,120)" style="animation:node-pop .5s ease-out 3.0s both;transform-origin:0px 0px">
+                <circle cx="0" cy="0" r="9" fill="rgba(140,50,220,0.28)" stroke="rgba(180,80,255,0.40)" stroke-width=".8"/>
+                <text x="0" y="3.5" font-family="Inter,sans-serif" font-size="5.5" font-weight="800"
+                  fill="rgba(220,160,255,0.90)" text-anchor="middle" letter-spacing=".02em">HOW</text>
+              </g>
+              <g transform="translate(76,158)" style="animation:node-pop .5s ease-out 3.2s both;transform-origin:0px 0px">
+                <circle cx="0" cy="0" r="9" fill="rgba(140,50,220,0.28)" stroke="rgba(180,80,255,0.40)" stroke-width=".8"/>
+                <text x="0" y="3.5" font-family="Inter,sans-serif" font-size="5.5" font-weight="800"
+                  fill="rgba(220,160,255,0.90)" text-anchor="middle" letter-spacing=".02em">BUT</text>
+              </g>
+              <g transform="translate(158,58)" style="animation:node-pop .5s ease-out 2.9s both;transform-origin:0px 0px">
+                <circle cx="0" cy="0" r="10" fill="rgba(160,70,240,0.28)" stroke="rgba(200,100,255,0.42)" stroke-width=".8"/>
+                <text x="0" y="3.5" font-family="Inter,sans-serif" font-size="5.0" font-weight="800"
+                  fill="rgba(220,160,255,0.90)" text-anchor="middle" letter-spacing=".02em">WHAT</text>
+              </g>
+              <g transform="translate(162,150)" style="animation:node-pop .5s ease-out 3.1s both;transform-origin:0px 0px">
+                <circle cx="0" cy="0" r="9" fill="rgba(140,50,220,0.28)" stroke="rgba(180,80,255,0.40)" stroke-width=".8"/>
+                <text x="0" y="3.5" font-family="Inter,sans-serif" font-size="5.0" font-weight="800"
+                  fill="rgba(220,160,255,0.90)" text-anchor="middle" letter-spacing=".02em">ELSE</text>
+              </g>
+            </g>
+
+            <!-- ── DEBATE LIGHTNING BOLT (center, energetic) ── -->
+            <g style="animation:idea-appear 1.0s ease-out 2.4s both">
+              <path d="M 190,28 L 178,52 L 188,52 L 174,78 L 198,48 L 186,48 Z"
+                fill="rgba(200,120,255,0.70)" stroke="rgba(230,180,255,0.50)" stroke-width=".8"
+                filter="url(#f-purple-glow)"
+                style="animation:debate-flash 1.8s ease-in-out 2.0s infinite"/>
+            </g>
+
+            <!-- ── GEAR / SYSTEM (upper right, NT thinking) ── -->
+            <g transform="translate(284,68)" style="animation:idea-appear 1.0s ease-out 2.6s both">
+              <!-- outer gear ring -->
+              <g style="animation:spin-slow 14s linear infinite;transform-origin:0px 0px">
+                <circle cx="0" cy="0" r="26" stroke="rgba(160,70,240,0.30)" stroke-width="1.2"
+                  stroke-dasharray="8 4" fill="none"/>
+                <!-- gear teeth -->
+                <g stroke="rgba(160,70,240,0.35)" stroke-width="1.5" fill="none">
+                  <line x1="0" y1="-26" x2="0" y2="-30"/>
+                  <line x1="13" y1="-22.5" x2="15" y2="-26"/>
+                  <line x1="22.5" y1="-13" x2="26" y2="-15"/>
+                  <line x1="26" y1="0" x2="30" y2="0"/>
+                  <line x1="22.5" y1="13" x2="26" y2="15"/>
+                  <line x1="13" y1="22.5" x2="15" y2="26"/>
+                  <line x1="0" y1="26" x2="0" y2="30"/>
+                  <line x1="-13" y1="22.5" x2="-15" y2="26"/>
+                  <line x1="-22.5" y1="13" x2="-26" y2="15"/>
+                  <line x1="-26" y1="0" x2="-30" y2="0"/>
+                  <line x1="-22.5" y1="-13" x2="-26" y2="-15"/>
+                  <line x1="-13" y1="-22.5" x2="-15" y2="-26"/>
+                </g>
+              </g>
+              <!-- inner gear -->
+              <g style="animation:counter-spin 9s linear infinite;transform-origin:0px 0px">
+                <circle cx="0" cy="0" r="14" stroke="rgba(180,80,255,0.38)" stroke-width="1"
+                  stroke-dasharray="5 3" fill="rgba(140,50,220,0.08)"/>
+              </g>
+              <!-- center dot -->
+              <circle cx="0" cy="0" r="4" fill="rgba(200,120,255,0.85)" filter="url(#f-soft)"/>
+              <circle cx="0" cy="0" r="2" fill="rgba(240,200,255,0.95)"/>
+            </g>
+
+            <!-- ── DEBATE ARROWS (opposing ideas) ── -->
+            <g style="animation:idea-appear 1.0s ease-out 3.0s both">
+              <!-- arrow right (thesis) -->
+              <line x1="218" y1="118" x2="258" y2="118"
+                stroke="rgba(200,120,255,0.45)" stroke-width="1.2"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw 0.6s ease-out 3.2s both"/>
+              <polygon points="258,114 266,118 258,122"
+                fill="rgba(200,120,255,0.60)"
+                style="animation:node-pop .4s ease-out 3.6s both;transform-origin:258px 118px"/>
+              <text x="232" y="114" font-family="Inter,sans-serif" font-size="5.5" font-weight="700"
+                fill="rgba(200,130,255,0.58)" letter-spacing=".05em">THESIS</text>
+
+              <!-- arrow left (antithesis) -->
+              <line x1="322" y1="132" x2="282" y2="132"
+                stroke="rgba(160,70,240,0.40)" stroke-width="1.2"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw 0.6s ease-out 3.4s both"/>
+              <polygon points="282,128 274,132 282,136"
+                fill="rgba(160,70,240,0.56)"
+                style="animation:node-pop .4s ease-out 3.8s both;transform-origin:282px 132px"/>
+              <text x="290" y="128" font-family="Inter,sans-serif" font-size="5.5" font-weight="700"
+                fill="rgba(180,100,255,0.52)" letter-spacing=".05em">ANTITHESIS</text>
+
+              <!-- synthesis line below -->
+              <line x1="240" y1="148" x2="308" y2="148"
+                stroke="rgba(200,120,255,0.28)" stroke-width=".8"
+                stroke-dasharray="300" stroke-dashoffset="300"
+                style="animation:arc-draw 0.7s ease-out 3.8s both"/>
+              <text x="268" y="156" font-family="Inter,sans-serif" font-size="5.5" font-weight="700"
+                fill="rgba(200,130,255,0.45)" letter-spacing=".05em" text-anchor="middle">SYNTHESIS</text>
+            </g>
+
+            <!-- ── METRIC BARS (bottom right) ── -->
+            <g style="animation:idea-appear 1.0s ease-out 3.4s both">
+              <text x="218" y="174" font-family="Inter,sans-serif" font-size="5.5" font-weight="700"
+                fill="rgba(200,130,255,0.55)" letter-spacing=".06em">CREATIVITY</text>
+              <rect x="218" y="177" width="70" height="3.5" rx="1.5" fill="rgba(160,70,240,0.12)"/>
+              <rect x="218" y="177" width="67" height="3.5" rx="1.5" fill="rgba(160,70,240,0.58)"
+                style="animation:idea-appear 1.2s ease-out 3.6s both"/>
+
+              <text x="218" y="188" font-family="Inter,sans-serif" font-size="5.5" font-weight="700"
+                fill="rgba(200,130,255,0.55)" letter-spacing=".06em">DEBATE</text>
+              <rect x="218" y="191" width="70" height="3.5" rx="1.5" fill="rgba(160,70,240,0.12)"/>
+              <rect x="218" y="191" width="64" height="3.5" rx="1.5" fill="rgba(160,70,240,0.52)"
+                style="animation:idea-appear 1.2s ease-out 3.8s both"/>
+
+              <text x="218" y="202" font-family="Inter,sans-serif" font-size="5.5" font-weight="700"
+                fill="rgba(200,130,255,0.55)" letter-spacing=".06em">INNOVATION</text>
+              <rect x="218" y="205" width="70" height="3.5" rx="1.5" fill="rgba(160,70,240,0.12)"/>
+              <rect x="218" y="205" width="61" height="3.5" rx="1.5" fill="rgba(160,70,240,0.46)"
+                style="animation:idea-appear 1.2s ease-out 4.0s both"/>
+            </g>
+
+            <!-- ── QUOTE MARK (debater symbol) ── -->
+            <g style="animation:idea-appear 1.0s ease-out 3.6s both">
+              <text x="32" y="60" font-family="Inter,sans-serif" font-size="42" font-weight="900"
+                fill="rgba(160,70,240,0.10)" letter-spacing="-.04em">"</text>
+              <text x="310" y="200" font-family="Inter,sans-serif" font-size="42" font-weight="900"
+                fill="rgba(160,70,240,0.08)" letter-spacing="-.04em">"</text>
+            </g>
+
+            <!-- registration corners -->
+            <g stroke="rgba(180,80,255,0.28)" stroke-width=".8" fill="none">
+              <path d="M 14,14 L 14,22 M 14,14 L 22,14"/>
+              <path d="M 366,14 L 366,22 M 366,14 L 358,14"/>
+              <path d="M 14,226 L 14,218 M 14,226 L 22,226"/>
+              <path d="M 366,226 L 366,218 M 366,226 L 358,226"/>
+            </g>
+            <!-- bottom dimension line -->
+            <g style="animation:idea-appear 1.0s ease-out 3.8s both">
+              <line x1="60" y1="228" x2="320" y2="228" stroke="rgba(180,80,255,0.20)" stroke-width=".8"/>
+              <line x1="60" y1="225" x2="60" y2="231" stroke="rgba(180,80,255,0.20)" stroke-width=".8"/>
+              <line x1="320" y1="225" x2="320" y2="231" stroke="rgba(180,80,255,0.20)" stroke-width=".8"/>
+              <text x="190" y="236.5" font-family="Inter,sans-serif" font-size="5.5" font-weight="700"
+                fill="rgba(180,80,255,0.38)" letter-spacing=".12em" text-anchor="middle">DEBATER</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- spark container -->
+      <div id="sparkContainer"></div>
+
+      <!-- letter tag -->
+      <div class="letter-tag">
+        <div class="lt-col"><span class="lt">E</span><span class="lt-word">Extra</span></div>
+        <div class="lt-col"><span class="lt">N</span><span class="lt-word">Intuit</span></div>
+        <div class="lt-col"><span class="lt">T</span><span class="lt-word">Think</span></div>
+        <div class="lt-col"><span class="lt">P</span><span class="lt-word">Percv</span></div>
+      </div>
+
+      <!-- hover meaning overlay -->
+      <div class="card-meanings">
+        <div class="meaning-item"><div class="meaning-icon">⚡</div><div class="meaning-label">Extravert</div></div>
+        <div class="meaning-item"><div class="meaning-icon">💡</div><div class="meaning-label">Intuitive</div></div>
+        <div class="meaning-item"><div class="meaning-icon">🧠</div><div class="meaning-label">Thinking</div></div>
+        <div class="meaning-item"><div class="meaning-icon">🎲</div><div class="meaning-label">Perceiving</div></div>
+      </div>
+
+      <div class="card-vline"></div>
+      <div class="card-hline"></div>
+
+      <!-- card content -->
+      <div class="card-content">
+        <div class="card-name">
+          <div class="name-main">entp<span class="name-dot">.</span>kr</div>
+          <div class="name-sub">the debater · the innovator</div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row">E — Extravert</div>
+          <div class="meta-row">NT — Intuitive &amp; Thinking</div>
+          <div class="meta-row">P — Perceiving</div>
+        </div>
+        <div class="card-right">
+          <div class="badge">
+            <span class="badge-glyph">💡</span>
+            <span class="badge-label">ENTP</span>
+          </div>
+          <div class="domain-url">entp<span class="domain-tld">.kr</span></div>
+        </div>
+      </div>
+    </div><!-- /.card -->
+  </div><!-- /.card-wrap -->
+</div><!-- /.scene -->
+
+<script>
+// === tilt interaction ===
+const wrap = document.getElementById('cardWrap');
+const holo = document.getElementById('cardHolo');
+const spot = document.getElementById('cardSpot');
+let tX = 0, tY = 0, cX = 0, cY = 0, hovering = false;
+const lerp = (a, b, t) => a + (b - a) * t;
+
+(function loop() {
+  cX = lerp(cX, tX, 0.12);
+  cY = lerp(cY, tY, 0.12);
+  wrap.style.transform = hovering
+    ? `rotateX(${cX}deg) rotateY(${cY}deg) scale(1.04)`
+    : `rotateX(${cX}deg) rotateY(${cY}deg)`;
+  requestAnimationFrame(loop);
+})();
+
+wrap.addEventListener('mouseenter', () => {
+  hovering = true;
+  wrap.classList.remove('is-idle');
+  wrap.style.animation = 'none';
+});
+wrap.addEventListener('mouseleave', () => {
+  hovering = false;
+  tX = 0; tY = 0;
+  wrap.style.boxShadow = '';
+});
+wrap.addEventListener('mousemove', e => {
+  const r = wrap.getBoundingClientRect();
+  const nx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+  const ny = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+  tY = nx * 15;
+  tX = -ny * 12;
+  const px = ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%';
+  const py = ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%';
+  const angle = (Math.atan2(ny, nx) * 180 / Math.PI + 90).toFixed(1) + 'deg';
+  holo.style.setProperty('--mx', px);
+  holo.style.setProperty('--my', py);
+  holo.style.setProperty('--r', angle);
+  spot.style.setProperty('--mx', px);
+  spot.style.setProperty('--my', py);
+  wrap.style.boxShadow = `0 45px 90px rgba(4,2,10,.82), 0 12px 28px rgba(4,2,10,.58), 0 0 42px rgba(160,70,240,.20)`;
+});
+
+// === spark particles ===
+const SPARKS = [
+  {x:'5%',  s:2.4, color:'rgba(200,120,255,0.82)', dur:6.5, delay:0,   sx:'10px',  sy:'-60px', sr:'45deg'},
+  {x:'14%', s:1.8, color:'rgba(180,80,255,0.72)',  dur:7.8, delay:.6,  sx:'-8px',  sy:'-68px', sr:'120deg'},
+  {x:'25%', s:2.0, color:'rgba(220,150,255,0.78)', dur:7.0, delay:1.3, sx:'14px',  sy:'-55px', sr:'80deg'},
+  {x:'37%', s:1.5, color:'rgba(160,70,240,0.68)',  dur:8.5, delay:2.0, sx:'-12px', sy:'-72px', sr:'155deg'},
+  {x:'50%', s:2.2, color:'rgba(200,110,255,0.76)', dur:7.2, delay:.3,  sx:'8px',   sy:'-64px', sr:'60deg'},
+  {x:'62%', s:1.6, color:'rgba(180,90,255,0.70)',  dur:8.8, delay:1.7, sx:'-6px',  sy:'-70px', sr:'135deg'},
+  {x:'72%', s:2.0, color:'rgba(210,140,255,0.74)', dur:7.5, delay:2.6, sx:'12px',  sy:'-58px', sr:'95deg'},
+  {x:'82%', s:1.7, color:'rgba(170,75,245,0.68)',  dur:9.0, delay:1.1, sx:'-10px', sy:'-66px', sr:'170deg'},
+  {x:'18%', s:1.3, color:'rgba(230,170,255,0.62)', dur:10.2,delay:3.4, sx:'6px',   sy:'-78px', sr:'50deg'},
+  {x:'55%', s:1.9, color:'rgba(190,95,250,0.72)',  dur:9.5, delay:2.3, sx:'-7px',  sy:'-62px', sr:'110deg'},
+  {x:'44%', s:1.4, color:'rgba(210,145,255,0.60)', dur:10.8,delay:4.2, sx:'9px',   sy:'-82px', sr:'200deg'},
+  {x:'88%', s:1.8, color:'rgba(200,115,255,0.70)', dur:7.2, delay:.2,  sx:'-15px', sy:'-56px', sr:'140deg'},
+];
+
+const sparkContainer = document.getElementById('sparkContainer');
+SPARKS.forEach(p => {
+  const el = document.createElement('div');
+  el.className = 'spark';
+  el.style.cssText = `
+    left:${p.x};
+    bottom:${Math.floor(Math.random() * 36 + 8)}px;
+    width:${p.s}px;
+    height:${p.s}px;
+    background:${p.color};
+    --sx:${p.sx};
+    --sy:${p.sy};
+    --sr:${p.sr};
+    animation-duration:${p.dur}s;
+    animation-delay:${p.delay}s;
+    box-shadow:0 0 ${Math.ceil(p.s * 2.5)}px ${p.color};
+  `;
+  sparkContainer.appendChild(el);
+});
+</script>
+</body>
+</html>
